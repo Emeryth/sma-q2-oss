@@ -1,0 +1,121 @@
+diff -ruN twi_master/nrf_drv_twi.c twi_master_new/nrf_drv_twi.c
+--- twi_master/nrf_drv_twi.c	2016-03-10 18:01:02.000000000 +0100
++++ twi_master_new/nrf_drv_twi.c	2019-09-25 21:38:30.149485000 +0200
+@@ -66,13 +66,13 @@
+     nrf_drv_twi_xfer_desc_t   xfer_desc;
+     uint32_t                  flags;
+     uint8_t *                 p_curr_buf;
+-    uint8_t                   curr_length;
++    uint16_t                   curr_length;
+     bool                      curr_no_stop;
+     nrf_drv_state_t           state;
+     bool                      error;
+     volatile bool             busy;
+     bool                      repeated;
+-    uint8_t                   bytes_transferred;
++    uint16_t                   bytes_transferred;
+ } twi_control_block_t;
+ 
+ static twi_control_block_t m_cb[TWI_COUNT];
+@@ -292,8 +292,8 @@
+ #ifdef TWI_IN_USE
+ static bool twi_send_byte(NRF_TWI_Type  * p_twi,
+                           uint8_t const * p_data,
+-                          uint8_t         length,
+-                          uint8_t       * p_bytes_transferred,
++                          uint16_t         length,
++                          uint16_t       * p_bytes_transferred,
+                           bool            no_stop)
+ {
+     if (*p_bytes_transferred < length)
+@@ -318,8 +318,8 @@
+ 
+ static void twi_receive_byte(NRF_TWI_Type * p_twi,
+                              uint8_t      * p_data,
+-                             uint8_t        length,
+-                             uint8_t      * p_bytes_transferred)
++                             uint16_t        length,
++                             uint16_t      * p_bytes_transferred)
+ {
+     if (*p_bytes_transferred < length)
+     {
+@@ -342,9 +342,9 @@
+ 
+ static bool twi_transfer(NRF_TWI_Type  * p_twi,
+                          bool          * p_error,
+-                         uint8_t       * p_bytes_transferred,
++                         uint16_t       * p_bytes_transferred,
+                          uint8_t       * p_data,
+-                         uint8_t         length,
++                         uint16_t         length,
+                          bool            no_stop)
+ {
+     bool do_stop_check;
+@@ -417,7 +417,7 @@
+ static ret_code_t twi_tx_start_transfer(twi_control_block_t * p_cb,
+                                         NRF_TWI_Type *        p_twi,
+                                         uint8_t const *       p_data,
+-                                        uint8_t               length,
++                                        uint16_t               length,
+                                         bool                  no_stop)
+ {
+     ret_code_t ret_code = NRF_SUCCESS;
+@@ -461,7 +461,7 @@
+ static ret_code_t twi_rx_start_transfer(twi_control_block_t * p_cb,
+                                         NRF_TWI_Type *        p_twi,
+                                         uint8_t const *       p_data,
+-                                        uint8_t               length)
++                                        uint16_t               length)
+ {
+     ret_code_t ret_code = NRF_SUCCESS;
+ 
+@@ -740,7 +740,7 @@
+ ret_code_t nrf_drv_twi_tx(nrf_drv_twi_t const * p_instance,
+                           uint8_t               address,
+                           uint8_t const *       p_data,
+-                          uint8_t               length,
++                          uint16_t               length,
+                           bool                  no_stop)
+ {
+     nrf_drv_twi_xfer_desc_t xfer = NRF_DRV_TWI_XFER_DESC_TX(address, (uint8_t*)p_data, length);
+@@ -751,7 +751,7 @@
+ ret_code_t nrf_drv_twi_rx(nrf_drv_twi_t const * p_instance,
+                           uint8_t               address,
+                           uint8_t *             p_data,
+-                          uint8_t               length)
++                          uint16_t               length)
+ {
+     nrf_drv_twi_xfer_desc_t xfer = NRF_DRV_TWI_XFER_DESC_RX(address, p_data, length);
+     return nrf_drv_twi_xfer(p_instance, &xfer, 0);
+diff -ruN twi_master/nrf_drv_twi.h twi_master_new/nrf_drv_twi.h
+--- twi_master/nrf_drv_twi.h	2016-03-10 18:01:02.000000000 +0100
++++ twi_master_new/nrf_drv_twi.h	2019-09-25 21:05:59.463839000 +0200
+@@ -147,8 +147,8 @@
+ {
+     nrf_drv_twi_xfer_type_t type;             ///< Type of transfer.
+     uint8_t                 address;          ///< Slave address.
+-    uint8_t                 primary_length;   ///< Number of bytes transferred.
+-    uint8_t                 secondary_length; ///< Number of bytes transferred.
++    uint16_t                 primary_length;   ///< Number of bytes transferred.
++    uint16_t                 secondary_length; ///< Number of bytes transferred.
+     uint8_t *               p_primary_buf;    ///< Pointer to transferred data.
+     uint8_t *               p_secondary_buf;  ///< Pointer to transferred data.
+ } nrf_drv_twi_xfer_desc_t;
+@@ -271,7 +271,7 @@
+ ret_code_t nrf_drv_twi_tx(nrf_drv_twi_t const * p_instance,
+                           uint8_t               address,
+                           uint8_t const *       p_data,
+-                          uint8_t               length,
++                          uint16_t               length,
+                           bool                  no_stop);
+ 
+ /**
+@@ -292,7 +292,7 @@
+ ret_code_t nrf_drv_twi_rx(nrf_drv_twi_t const * p_instance,
+                           uint8_t               address,
+                           uint8_t *             p_data,
+-                          uint8_t               length);
++                          uint16_t               length);
+ 
+ /**
+  * @brief Function for preparing a TWI transfer.

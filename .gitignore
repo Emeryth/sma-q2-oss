@@ -1,0 +1,11 @@
+.project
+.cproject
+.settings
+*.o
+*.map
+*.hex
+*.out
+*.bin
+*.zip
+components
+armgcc/_build
