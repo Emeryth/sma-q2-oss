@@ -113,6 +113,11 @@ void nus_data_handler(ble_nus_t * p_nus, uint8_t * p_data, uint16_t length)
 }
 /**@snippet [Handling the data received over BLE] */
 
+void ble_send(uint8_t *data, uint16_t length){
+
+	ble_nus_string_send(&m_nus, data, length);
+}
+
 
 /**@brief Function for initializing services that will be used by the application.
  */

@@ -195,76 +195,80 @@ static TaskHandle_t  watchface_task;
 static TaskHandle_t  vibration_task;
 static TaskHandle_t  hrm_task;
 
-static void watchface_task_handler(void * arg){
+static void watchface_task_handler(void * arg) {
 
-	 TickType_t xLastWakeTime;
-	 TickType_t delay = 200;
+	TickType_t xLastWakeTime;
+	TickType_t delay = 200;
 
-    lcd_com_timer = xTimerCreate("lcd_com",1000,pdTRUE,0,lcd_com_timer_callback);
-    xTimerStart(lcd_com_timer,portMAX_DELAY);
-    battery_timer = xTimerCreate("battery",60000,pdTRUE,0,battery_timer_callback);
-    xTimerStart(battery_timer,portMAX_DELAY);
-    battery_sample();
+	lcd_com_timer = xTimerCreate("lcd_com", 1000, pdTRUE, 0,
+			lcd_com_timer_callback);
+	xTimerStart(lcd_com_timer, portMAX_DELAY);
+	battery_timer = xTimerCreate("battery", 60000, pdTRUE, 0,
+			battery_timer_callback);
+	xTimerStart(battery_timer, portMAX_DELAY);
+	battery_sample();
 
-    uint8_t random[1];
-    vTaskDelay(500);
-    sd_rand_application_vector_get(random,1);
-    srand48(random[0]);
-    button_event_t evt;
+	uint8_t random[1];
+	vTaskDelay(500);
+	sd_rand_application_vector_get(random, 1);
+	srand48(random[0]);
+	button_event_t evt;
 
-    xLastWakeTime = xTaskGetTickCount();
+	xLastWakeTime = xTaskGetTickCount();
 
-	for(;;){
+	for (;;) {
 		nrf_wdt_reload_request_set(NRF_WDT_RR0);
 
-		if (xQueueReceive(button_evt_queue, &evt, (TickType_t ) 0)) {
+		if (xQueueReceive(button_evt_queue, &evt, (TickType_t) 0)) {
 			backlight_on();
 
-			if (evt.press_type==LONG_PRESS){
-			vibration_short();
+			if (evt.press_type == LONG_PRESS) {
+				vibration_short();
 			}
 
-			if (evt.button == BUTTON_OK && evt.press_type == LONG_PRESS) {
+			if (current_applet->id == APPLET_WATCHFACE) {
+
+				if (evt.button == BUTTON_UP && evt.press_type == LONG_PRESS) {
 //				vTaskGetRunTimeStats(stats_buffer);
 //				puts(stats_buffer);
-				delay = 200;
-				current_applet = &applets[APPLET_MUSIC];
-			}
+					delay = 200;
+					current_applet = &applets[APPLET_MUSIC];
+				}
 
-			if (evt.button == BUTTON_DOWN && evt.press_type == LONG_PRESS) {
-				delay = 100;
-				current_applet = &applets[APPLET_TETRIS];
+				if (evt.button == BUTTON_DOWN && evt.press_type == LONG_PRESS) {
+					delay = 100;
+					current_applet = &applets[APPLET_TETRIS];
+				}
+
+				if (evt.button == BUTTON_OK && evt.press_type == LONG_PRESS) {
+					xTaskNotify(hrm_task, HRM_START, eSetValueWithOverwrite);
+					delay = 100;
+					current_applet = &applets[APPLET_HRM];
+				}
+
 			}
 
 			if (evt.button == BUTTON_BACK && evt.press_type == LONG_PRESS) {
-				xTaskNotify(hrm_task,HRM_STOP,eSetValueWithOverwrite);
+				xTaskNotify(hrm_task, HRM_STOP, eSetValueWithOverwrite);
 				delay = 200;
 				current_applet = &applets[APPLET_WATCHFACE];
 			}
-
-			if (evt.button == BUTTON_UP && evt.press_type == LONG_PRESS) {
-				xTaskNotify(hrm_task,HRM_START,eSetValueWithOverwrite);
-				delay = 100;
-				 current_applet = &applets[APPLET_HRM];
-			}
-
 
 			current_applet->handle_button_evt(&evt);
 		}
 
 //		lcd_clear(WHITE);
 		current_applet->draw_applet();
-		if (current_applet->id==APPLET_WATCHFACE){
+		if (current_applet->id == APPLET_WATCHFACE) {
 			draw_statusbar(0);
-		}
-		else{
+		} else {
 			draw_statusbar(1);
 //			backlight_on();
 		}
 		nrf_gfx_display(p_lcd);
 
 //		vTaskDelay(100);
-		vTaskDelayUntil( &xLastWakeTime, delay );
+		vTaskDelayUntil(&xLastWakeTime, delay);
 	}
 
 }

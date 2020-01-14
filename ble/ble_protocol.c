@@ -27,3 +27,15 @@ void ble_handle_message( uint8_t * p_data, uint16_t length){
     }
 
 }
+
+void ble_send_music_event(uint8_t evt){
+
+	uint16_t len=2;
+	uint8_t data[2];
+
+	data[0]=MSG_MUSIC_EVENT;
+	data[1]=evt;
+
+	ble_send(data,len);
+
+}

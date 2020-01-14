@@ -13,6 +13,7 @@
 #include "icon.h"
 #include "nrf_gfx.h"
 #include "vibration.h"
+#include "ble_protocol.h"
 
 static const nrf_lcd_t * p_lcd = &nrf_lcd_lpm013m126a;
 static const nrf_gfx_font_desc_t * title_font = &m1c_24ptFontInfo;
@@ -66,6 +67,22 @@ void music_handle_button_evt(button_event_t *evt){
 		}
 		else{
 			control_state=SKIP_STATE;
+		}
+	}
+	else if (evt->press_type == SHORT_PRESS_RELEASE){
+
+		switch (evt->button){
+		case BUTTON_OK:
+			ble_send_music_event(EVT_PLAY_PAUSE);
+			break;
+		case BUTTON_UP:
+			if (control_state==SKIP_STATE) ble_send_music_event(EVT_REV);
+			else ble_send_music_event(EVT_VOL_UP);
+			break;
+		case BUTTON_DOWN:
+			if (control_state==SKIP_STATE) ble_send_music_event(EVT_FWD);
+			else ble_send_music_event(EVT_VOL_DOWN);
+			break;
 		}
 	}
 
