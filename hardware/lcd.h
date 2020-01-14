@@ -35,6 +35,24 @@ enum lcd_colors{
 extern const nrf_gfx_font_desc_t orkney_24ptFontInfo;
 extern const nrf_gfx_font_desc_t orkney_8ptFontInfo;
 extern const nrf_gfx_font_desc_t dSEG7ClassicMini_32ptFontInfo;
+extern const nrf_gfx_font_desc_t m1c_10ptFontInfo;
+extern const nrf_gfx_font_desc_t m1c_10ptbFontInfo;
+extern const nrf_gfx_font_desc_t m1cthin_10ptFontInfo;
+extern const nrf_gfx_font_desc_t m1c_12ptFontInfo;
+extern const nrf_gfx_font_desc_t m1c_12ptbFontInfo;
+extern const nrf_gfx_font_desc_t m1cthin_12ptFontInfo;
+extern const nrf_gfx_font_desc_t m1c_14ptFontInfo;
+extern const nrf_gfx_font_desc_t m1c_14ptbFontInfo;
+extern const nrf_gfx_font_desc_t m1cthin_14ptFontInfo;
+extern const nrf_gfx_font_desc_t m1c_16ptFontInfo;
+extern const nrf_gfx_font_desc_t m1c_16ptbFontInfo;
+extern const nrf_gfx_font_desc_t m1c_18ptFontInfo;
+extern const nrf_gfx_font_desc_t m1c_18ptbFontInfo;
+extern const nrf_gfx_font_desc_t m1c_24ptFontInfo;
+extern const nrf_gfx_font_desc_t m1mn_32ptFontInfo;
+extern const nrf_gfx_font_desc_t m1mn_36ptFontInfo;
+extern const nrf_gfx_font_desc_t m1mn_48ptFontInfo;
+
 extern const nrf_lcd_t nrf_lcd_lpm013m126a;
 
 extern uint8_t lcd_buffer[LCD_HEIGHT][LCD_LINE_SIZE];

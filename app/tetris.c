@@ -195,6 +195,7 @@ void nextframe() {
 }
 
 void draw_tetris(void) {
+	lcd_clear(BLACK);
 
 	nextframe();
 
@@ -220,7 +221,7 @@ void draw_tetris(void) {
 		rect.y += TETRIS_BLOCK_WIDTH;
 	}
 
-	nrf_gfx_display(p_lcd);
+//	nrf_gfx_display(p_lcd);
 }
 
 void tetris_handle_button_evt(button_event_t *evt) {

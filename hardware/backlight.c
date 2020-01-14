@@ -26,6 +26,7 @@ TimerHandle_t backlight_timer = NULL;
 void backlight_timer_callback( TimerHandle_t pxTimer ){
 
 	app_pwm_channel_duty_set(&PWM1,0,0);
+	app_pwm_disable(&PWM1);
 
 }
 
@@ -36,9 +37,9 @@ void backlight_init(void) {
 	pwm1_cfg.pin_polarity[0] = APP_PWM_POLARITY_ACTIVE_HIGH;
 
 	app_pwm_init(&PWM1, &pwm1_cfg, NULL);
-	app_pwm_enable(&PWM1);
+//	app_pwm_enable(&PWM1);
 
-	app_pwm_channel_duty_set(&PWM1,0,0);
+//	app_pwm_channel_duty_set(&PWM1,0,0);
 
 	backlight_timer = xTimerCreate("backlight",3000,pdFALSE,0,backlight_timer_callback);
 
@@ -47,6 +48,7 @@ void backlight_init(void) {
 
 void backlight_on(void){
 
+	app_pwm_enable(&PWM1);
 	app_pwm_channel_duty_set(&PWM1,0,70);
 //	app_timer_start(backlight_timer,APP_TIMER_TICKS(3000, 0),NULL);
 

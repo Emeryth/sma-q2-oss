@@ -36,6 +36,7 @@
 #include "pah8series_api_c.h"
 #include "pah8002.h"
 #include "app_hrm.h"
+#include "app_music.h"
 #include "nrf_rtc.h"
 #include "hrm.h"
 
@@ -48,19 +49,25 @@ static const nrf_lcd_t * p_lcd = &nrf_lcd_lpm013m126a;
 enum applet_id{
 	APPLET_WATCHFACE,
 	APPLET_TETRIS,
-	APPLET_HRM
+	APPLET_HRM,
+	APPLET_MUSIC,
+	APPLET_CALL,
+	APPLET_NOTIFICATION
 };
 
 applet_t applets[]={
 		{APPLET_WATCHFACE,draw_watchface,watchface_handle_button_evt},
 		{APPLET_TETRIS,draw_tetris,tetris_handle_button_evt},
-		{APPLET_HRM,draw_hrm,hrm_handle_button_evt}
+		{APPLET_HRM,draw_hrm,hrm_handle_button_evt},
+		{APPLET_MUSIC,music_draw,music_handle_button_evt}
 
 };
 
 applet_t *current_applet=&applets[0];
 
 uint8_t start_hrm=0;
+
+volatile wchar_t test[100];
 
 uint32_t get_stats_timer( void ){
 	return nrf_rtc_counter_get(portNRF_RTC_REG);
@@ -191,12 +198,13 @@ static TaskHandle_t  hrm_task;
 static void watchface_task_handler(void * arg){
 
 	 TickType_t xLastWakeTime;
-	 TickType_t delay = 100;
+	 TickType_t delay = 200;
 
     lcd_com_timer = xTimerCreate("lcd_com",1000,pdTRUE,0,lcd_com_timer_callback);
     xTimerStart(lcd_com_timer,portMAX_DELAY);
-    battery_timer = xTimerCreate("battery",5000,pdTRUE,0,battery_timer_callback);
+    battery_timer = xTimerCreate("battery",60000,pdTRUE,0,battery_timer_callback);
     xTimerStart(battery_timer,portMAX_DELAY);
+    battery_sample();
 
     uint8_t random[1];
     vTaskDelay(500);
@@ -217,21 +225,26 @@ static void watchface_task_handler(void * arg){
 			}
 
 			if (evt.button == BUTTON_OK && evt.press_type == LONG_PRESS) {
-				vTaskGetRunTimeStats(stats_buffer);
-				puts(stats_buffer);
+//				vTaskGetRunTimeStats(stats_buffer);
+//				puts(stats_buffer);
+				delay = 200;
+				current_applet = &applets[APPLET_MUSIC];
 			}
 
 			if (evt.button == BUTTON_DOWN && evt.press_type == LONG_PRESS) {
+				delay = 100;
 				current_applet = &applets[APPLET_TETRIS];
 			}
 
 			if (evt.button == BUTTON_BACK && evt.press_type == LONG_PRESS) {
 				xTaskNotify(hrm_task,HRM_STOP,eSetValueWithOverwrite);
+				delay = 200;
 				current_applet = &applets[APPLET_WATCHFACE];
 			}
 
 			if (evt.button == BUTTON_UP && evt.press_type == LONG_PRESS) {
 				xTaskNotify(hrm_task,HRM_START,eSetValueWithOverwrite);
+				delay = 100;
 				 current_applet = &applets[APPLET_HRM];
 			}
 
@@ -239,16 +252,16 @@ static void watchface_task_handler(void * arg){
 			current_applet->handle_button_evt(&evt);
 		}
 
-		lcd_clear(BLACK);
+//		lcd_clear(WHITE);
+		current_applet->draw_applet();
 		if (current_applet->id==APPLET_WATCHFACE){
 			draw_statusbar(0);
 		}
 		else{
 			draw_statusbar(1);
-			backlight_on();
+//			backlight_on();
 		}
-
-		current_applet->draw_applet();
+		nrf_gfx_display(p_lcd);
 
 //		vTaskDelay(100);
 		vTaskDelayUntil( &xLastWakeTime, delay );
@@ -401,12 +414,15 @@ int main(void)
     nrf_gfx_print(p_lcd, &text_start, PINK, "Pink", p_font, true);
     nrf_gfx_display(p_lcd);
 
-    uart_init();
+//    uart_init();
     battery_init();
     backlight_init();
     vibration_init();
+//    for (;;){
+//    __WFE();
+//    }
 
-    printf("\r\nUART Start!\r\n");
+//    printf("\r\nUART Start!\r\n");
     ble_stack_init();
     gap_params_init();
     services_init();

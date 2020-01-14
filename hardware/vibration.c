@@ -12,6 +12,7 @@
 #include "timers.h"
 
 vibration_state_t vibration_state;
+uint8_t pwm_enabled=0;
 
 APP_PWM_INSTANCE(PWM0, 2);
 
@@ -22,9 +23,9 @@ void vibration_init(void){
 	pwm0_cfg.pin_polarity[0] = APP_PWM_POLARITY_ACTIVE_HIGH;
 
 	app_pwm_init(&PWM0, &pwm0_cfg, NULL);
-	app_pwm_enable(&PWM0);
+//	app_pwm_enable(&PWM0);
 
-	app_pwm_channel_duty_set(&PWM0,0,0);
+//	app_pwm_channel_duty_set(&PWM0,0,0);
 
 }
 
@@ -33,7 +34,10 @@ void vibration_step(void){
 
 	if (vibration_state.repeat!=0){
 	uint8_t duty = vibration_state.pattern.pattern[vibration_state.step];
-
+	if (!pwm_enabled){
+		app_pwm_enable(&PWM0);
+		pwm_enabled=1;
+	}
 	app_pwm_channel_duty_set(&PWM0,0,duty);
 
 	vibration_state.step++;
@@ -47,7 +51,11 @@ void vibration_step(void){
 	}
 	}
 	else{
-		app_pwm_channel_duty_set(&PWM0,0,0);
+		if (pwm_enabled){
+			app_pwm_channel_duty_set(&PWM0,0,0);
+			app_pwm_disable(&PWM0);
+			pwm_enabled=0;
+		}
 	}
 
 }

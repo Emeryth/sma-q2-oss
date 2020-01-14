@@ -27,7 +27,7 @@ uint8_t lcd_buffer[LCD_HEIGHT][LCD_LINE_SIZE]={0};
 
 static inline uint8_t to_4bit_color(uint32_t color){
 
-	uint8_t color4=(color&0x07)<<1;
+	uint8_t color4=((color&0x07)<<1)|0x01;
 	return (color4<<4)|color4;
 
 }
@@ -135,7 +135,7 @@ void lcd_draw_rect(uint16_t x, uint16_t y, uint16_t width, uint16_t height, uint
 
 void lcd_draw_small_num(uint8_t x,uint8_t y, uint8_t num){
 
-	icon_t icon = {.id=0,.x=6+num,.y=0,.w=1,.h=1};
+	icon_t icon = {.id=0,.x=6+num,.y=0,.w=1,.h=1,.data=icons_dat};
 
 	lcd_draw_icon(x,y,icon);
 }
@@ -148,7 +148,7 @@ void lcd_draw_icon(uint8_t x,uint8_t y, icon_t icon){
 
 	for (int h=0;h<icon.h*ICON_UNIT&&(y+h)<LCD_HEIGHT;h++){
 		for (int w=0;w<icon.w&&((x/2+(w+1)*ICON_UNIT_WIDTH)<=LCD_LINE_SIZE);w++){
-				uint32_t line=((uint32_t *)icons_dat)[(start_y+ICON_DATA_WIDTH*h+start_x+w*ICON_UNIT_WIDTH)/4];
+				uint32_t line=((uint32_t *)icon.data)[(start_y+ICON_DATA_WIDTH*h+start_x+w*ICON_UNIT_WIDTH)/4];
 				lcd_draw_8pix(x/2+w*ICON_UNIT_WIDTH,y+h,line);
 		}
 	}

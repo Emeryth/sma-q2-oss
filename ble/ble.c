@@ -19,6 +19,7 @@
 #include "app_timer.h"
 #include "app_time.h"
 #include "status.h"
+#include "ble_protocol.h"
 
 
 #define IS_SRVC_CHANGED_CHARACT_PRESENT 0                                           /**< Include the service_changed characteristic. If not enabled, the server's database cannot be changed for the lifetime of the device. */
@@ -108,12 +109,7 @@ void gap_params_init(void)
 /**@snippet [Handling the data received over BLE] */
 void nus_data_handler(ble_nus_t * p_nus, uint8_t * p_data, uint16_t length)
 {
-    if (p_data[0]==0x01){
-    	uint32_t date;
-    	memcpy(&date,p_data+1,4);
-
-    	set_date(date);
-    }
+	ble_handle_message(p_data,length);
 }
 /**@snippet [Handling the data received over BLE] */
 
