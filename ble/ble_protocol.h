@@ -15,6 +15,7 @@ enum ble_message_type{
 	MSG_SET_TIME=0x01,
 	MSG_BATTERY_STATE,
 	MSG_MUSIC_EVENT,
+	MSG_SET_WEATHER,
 
 };
 

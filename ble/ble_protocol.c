@@ -13,6 +13,7 @@
 #include "FreeRTOS.h"
 #include "app_timer.h"
 #include "app_time.h"
+#include "weather.h"
 
 
 void ble_handle_message( uint8_t * p_data, uint16_t length){
@@ -24,6 +25,9 @@ void ble_handle_message( uint8_t * p_data, uint16_t length){
     	memcpy(&date,p_data+1,4);
 
     	set_date(date);
+    }
+    else if(msg_type==MSG_SET_WEATHER){
+    	weather_set(p_data);
     }
 
 }

@@ -123,6 +123,7 @@ $(abspath ../app/app_music.c) \
 $(abspath ../app/watchface.c) \
 $(abspath ../app/status.c) \
 $(abspath ../app/tetris.c) \
+$(abspath ../app/weather.c) \
 $(abspath ../ble/ble.c) \
 $(abspath ../ble/ble_protocol.c) \
 

@@ -10,10 +10,12 @@
 #include "tetris.h"
 #include "pah8002.h"
 #include "status.h"
+#include "weather.h"
 
 static const nrf_gfx_font_desc_t * p_font = &m1cthin_12ptFontInfo;
 static const nrf_gfx_font_desc_t * p_digit_font = &m1mn_48ptFontInfo;
 static const nrf_gfx_font_desc_t * p_weather_font = &m1c_18ptbFontInfo;
+static const nrf_gfx_font_desc_t * p_weather_font_small = &m1c_14ptbFontInfo;
 static const nrf_lcd_t * p_lcd = &nrf_lcd_lpm013m126a;
 
 static char time_str[32];
@@ -37,10 +39,18 @@ void draw_watchface(void) {
 	nrf_gfx_rect_draw(p_lcd,&weather_bg,0,BLACK,true);
 
 	nrf_gfx_point_t temperature_start = NRF_GFX_POINT(64,128);
+	nrf_gfx_point_t temperature_max_start = NRF_GFX_POINT(120,124);
+	nrf_gfx_point_t temperature_min_start = NRF_GFX_POINT(120,146);
 
 	lcd_draw_icon(24, 128, weather_icons[WEATHER_SUN_CLOUD]);
-	snprintf(time_str, sizeof(time_str), "10\xB0");
+
+	snprintf(time_str, sizeof(time_str), "%d\xB0",weather_current.temperature);
 	nrf_gfx_print(p_lcd, &temperature_start, WHITE, time_str, p_weather_font, true);
+
+	snprintf(time_str, sizeof(time_str), "%d\xB0",weather_current.temperature_max);
+	nrf_gfx_print(p_lcd, &temperature_max_start, WHITE, time_str, p_weather_font_small, true);
+	snprintf(time_str, sizeof(time_str), "%d\xB0",weather_current.temperature_min);
+	nrf_gfx_print(p_lcd, &temperature_min_start, WHITE, time_str, p_weather_font_small, true);
 
 //	nrf_gfx_display(p_lcd);
 }
