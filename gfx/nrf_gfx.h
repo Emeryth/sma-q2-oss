@@ -298,6 +298,13 @@ ret_code_t nrf_gfx_print(nrf_lcd_t const * p_instance,
                          const nrf_gfx_font_desc_t * p_font,
                          bool wrap);
 
+ret_code_t nrf_gfx_print_box_utf8(nrf_lcd_t const * p_instance,
+						nrf_gfx_rect_t const * p_box,
+                         uint16_t font_color,
+                         const char * string,
+                         const nrf_gfx_font_desc_t * p_font,
+                         bool wrap);
+
 /**
  * @brief Function for getting the height of the screen.
  *

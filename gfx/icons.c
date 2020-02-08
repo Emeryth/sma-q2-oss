@@ -20,6 +20,8 @@ icon_t icons[NUM_ICONS]={
 		{.id=ICON_REV,.x=4,.y=6,.w=2,.h=2,.data=icons_dat},
 		{.id=ICON_VOL_DOWN,.x=6,.y=6,.w=2,.h=2,.data=icons_dat},
 		{.id=ICON_VOL_UP,.x=8,.y=6,.w=2,.h=2,.data=icons_dat},
+		{.id=ICON_TETRIS,.x=10,.y=6,.w=2,.h=2,.data=icons_dat},
+		{.id=ICON_BATTERY_MENU,.x=6,.y=2,.w=3,.h=2,.data=icons_dat},
 
 };
 

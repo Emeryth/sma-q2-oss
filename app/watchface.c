@@ -11,6 +11,7 @@
 #include "pah8002.h"
 #include "status.h"
 #include "weather.h"
+#include "screen_mgr.h"
 
 static const nrf_gfx_font_desc_t * p_font = &m1cthin_12ptFontInfo;
 static const nrf_gfx_font_desc_t * p_digit_font = &m1mn_48ptFontInfo;
@@ -19,8 +20,21 @@ static const nrf_gfx_font_desc_t * p_weather_font_small = &m1c_14ptbFontInfo;
 static const nrf_lcd_t * p_lcd = &nrf_lcd_lpm013m126a;
 
 static char time_str[32];
+struct tm previous_time;
 
-void draw_watchface(void) {
+void watchface_process(void){
+
+	if (previous_time.tm_hour!=time_date.tm_hour){
+		screen_redraw_request();
+	}
+	else if (previous_time.tm_min!=time_date.tm_min){
+		screen_redraw_request();
+	}
+
+	previous_time=time_date;
+}
+
+void watchface_draw(void) {
 	lcd_clear(WHITE);
 
 	nrf_gfx_point_t digits_start = NRF_GFX_POINT(32,30);
@@ -112,4 +126,12 @@ void watchface_handler(void *p_context) {
 
 void watchface_handle_button_evt(button_event_t *evt) {
 
+	if (evt->button == BUTTON_UP && evt->press_type == LONG_PRESS) {
+		screen_switch(APPLET_MUSIC);
+	}
+	else if (evt->button == BUTTON_OK && evt->press_type == SHORT_PRESS_RELEASE) {
+		screen_switch(APPLET_MENU);
+	}
+
+	screen_redraw_request();
 }

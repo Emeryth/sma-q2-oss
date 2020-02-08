@@ -12,6 +12,9 @@
 nrf_saadc_value_t buffer[1];
 int batt_voltage;
 
+uint8_t battery_history[BATTERY_HISTORY_LENGTH];
+uint8_t battery_history_pointer=0;
+
 void saadc_callback(nrf_drv_saadc_evt_t const * p_event) {
 	if (p_event->type == NRF_DRV_SAADC_EVT_DONE) {
 		ret_code_t err_code;
@@ -39,13 +42,13 @@ int battery_get_voltage(void) {
 
 uint8_t battery_get_percent(void) {
 
-	if (batt_voltage <= 235) {
+	if (batt_voltage <= BATTERY_0P) {
 		return 0;
-	} else if (batt_voltage >= 300) {
+	} else if (batt_voltage >= BATTERY_100P) {
 		return 100;
 	}
 
-	return (batt_voltage - 235) * 153 / 100;
+	return (batt_voltage - BATTERY_0P) * (10000/(BATTERY_100P-BATTERY_0P)) / 100;
 
 }
 
@@ -86,4 +89,12 @@ void saadc_init(void) {
 void battery_sample(void) {
 	saadc_init();
 	nrf_drv_saadc_sample();
+}
+
+void battery_save_history(void){
+	battery_history[battery_history_pointer]=battery_get_percent();
+	battery_history_pointer++;
+	if (battery_history_pointer>=BATTERY_HISTORY_LENGTH){
+		battery_history_pointer=0;
+	}
 }

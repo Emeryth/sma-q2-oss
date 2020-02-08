@@ -14,6 +14,8 @@
 #include "nrf_gfx.h"
 #include "pah8002.h"
 #include "vibration.h"
+#include "hrm.h"
+#include "screen_mgr.h"
 
 static const nrf_lcd_t * p_lcd = &nrf_lcd_lpm013m126a;
 static const nrf_gfx_font_desc_t * p_font = &orkney_8ptFontInfo;
@@ -110,7 +112,16 @@ long map(long x, long in_min, long in_max, long out_min, long out_max) {
   return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
 
-void draw_hrm(void) {
+void hrm_process(void){
+
+	frame_counter++;
+
+	if (frame_counter%2==0){
+		screen_redraw_request();
+	}
+}
+
+void hrm_draw(void) {
 	lcd_clear(BLACK);
 
 	if (available_samples>20){
@@ -184,7 +195,7 @@ void draw_hrm(void) {
 //	if (graph_start>=HRM_GRAPH_WIDTH){
 //		graph_start=0;
 //	}
-	frame_counter++;
+
 }
 
 
@@ -276,6 +287,20 @@ void hrm_add_samples(int32_t *samples){
 
 void hrm_handle_button_evt(button_event_t *evt){
 
-
+	if (evt->button == BUTTON_BACK && (evt->press_type == SHORT_PRESS_RELEASE|| evt->press_type == LONG_PRESS)) {
+		screen_return();
+	}
 
 }
+
+void hrm_enter(void){
+	memset(hrm_values,0,HRM_BUFFER_WIDTH*4);
+	memset(hrm_graph,0,HRM_GRAPH_WIDTH*4);
+	xTaskNotify(hrm_task, HRM_START, eSetValueWithOverwrite);
+}
+
+void hrm_exit(void){
+	xTaskNotify(hrm_task, HRM_STOP, eSetValueWithOverwrite);
+}
+
+

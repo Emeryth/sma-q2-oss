@@ -10,6 +10,7 @@
 
 #include "buttons.h"
 
+void music_process(void);
 void music_draw(void);
 void music_handle_button_evt(button_event_t *evt);
 

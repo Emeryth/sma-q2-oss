@@ -10,7 +10,8 @@
 
 #include "buttons.h"
 
-void draw_tetris(void);
+void tetris_process(void);
+void tetris_draw(void);
 void setinput(uint8_t in);
 void tetris_handle_button_evt(button_event_t *evt);
 

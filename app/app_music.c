@@ -14,6 +14,7 @@
 #include "nrf_gfx.h"
 #include "vibration.h"
 #include "ble_protocol.h"
+#include "screen_mgr.h"
 
 static const nrf_lcd_t * p_lcd = &nrf_lcd_lpm013m126a;
 static const nrf_gfx_font_desc_t * title_font = &m1c_24ptFontInfo;
@@ -27,16 +28,20 @@ enum music_control_state{
 
 int control_state=SKIP_STATE;
 
+void music_process(void){
+
+}
+
 void music_draw(void){
 	lcd_clear(WHITE);
 
-	nrf_gfx_point_t artist_start = NRF_GFX_POINT(8, 24);
-	nrf_gfx_point_t title_start = NRF_GFX_POINT(8, 64);
-	nrf_gfx_point_t album_start = NRF_GFX_POINT(8, 128);
+	nrf_gfx_rect_t artist_start = NRF_GFX_RECT(8, 20,140,60);
+	nrf_gfx_rect_t title_start = NRF_GFX_RECT(8, 60,140,90);
+	nrf_gfx_rect_t album_start = NRF_GFX_RECT(8, 128,140,60);
 
-    nrf_gfx_print(p_lcd, &artist_start, BLACK, "Darude", artist_font, true);
-    nrf_gfx_print(p_lcd, &title_start, BLACK, "Sandstorm", title_font, true);
-    nrf_gfx_print(p_lcd, &album_start, BLACK, "Before The Storm", album_font, true);
+	nrf_gfx_print_box_utf8(p_lcd, &artist_start, BLACK, "Darude", artist_font, true);
+    nrf_gfx_print_box_utf8(p_lcd, &title_start, BLACK, "Sandstorm", title_font, true);
+    nrf_gfx_print_box_utf8(p_lcd, &album_start, BLACK, "Before The Storm", album_font, true);
 
 	nrf_gfx_rect_t sidebar_bg=NRF_GFX_RECT(LCD_WIDTH-24,20,24,LCD_HEIGHT);
 	nrf_gfx_rect_draw(p_lcd,&sidebar_bg,0,BLACK,true);
@@ -61,7 +66,10 @@ void music_draw(void){
 
 void music_handle_button_evt(button_event_t *evt){
 
-	if (evt->button == BUTTON_OK && evt->press_type == LONG_PRESS){
+	if (evt->button == BUTTON_BACK && (evt->press_type == SHORT_PRESS_RELEASE|| evt->press_type == LONG_PRESS)) {
+		screen_return();
+	}
+	else if (evt->button == BUTTON_OK && evt->press_type == LONG_PRESS){
 		if (control_state==SKIP_STATE){
 			control_state=VOLUME_STATE;
 		}
@@ -86,4 +94,5 @@ void music_handle_button_evt(button_event_t *evt){
 		}
 	}
 
+	screen_redraw_request();
 }

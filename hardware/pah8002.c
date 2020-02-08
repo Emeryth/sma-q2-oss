@@ -124,7 +124,7 @@ const uint8_t suspend_register_array[][2] = { { 0x7f, 0x01 }, { 0x09, 0x01 }, {
 volatile float _hr = 0.0 ;
 volatile uint8_t   ret_status;
 volatile uint8_t init_result;
-TaskHandle_t  hrm_task;
+//TaskHandle_t  hrm_task;
 
 
 float __hardfp_sqrtf(float x) {
@@ -744,7 +744,7 @@ void pah8002_int(void){
 void pah8002_init(TaskHandle_t  handle) {
 //	nrf_gpio_cfg_input(HRM_INT_PIN,NRF_GPIO_PIN_PULLUP);
 
-	hrm_task=handle;
+//	hrm_task=handle;
 
 	nrf_drv_twi_init(&m_twi_pah8002, NULL, twi_event_handler, NULL);
 	nrf_drv_twi_enable(&m_twi_pah8002);

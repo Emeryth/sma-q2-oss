@@ -11,6 +11,7 @@
 #include "lcd.h"
 #include "nrf_gfx.h"
 #include "tetris.h"
+#include "screen_mgr.h"
 
 static const nrf_lcd_t * p_lcd = &nrf_lcd_lpm013m126a;
 
@@ -194,7 +195,11 @@ void nextframe() {
 	framen++;
 }
 
-void draw_tetris(void) {
+void tetris_process(void){
+	screen_redraw_request();
+}
+
+void tetris_draw(void) {
 	lcd_clear(BLACK);
 
 	nextframe();
@@ -226,7 +231,10 @@ void draw_tetris(void) {
 
 void tetris_handle_button_evt(button_event_t *evt) {
 
-	if (evt->press_type == SHORT_PRESS) {
+	if (evt->button == BUTTON_BACK && evt->press_type == LONG_PRESS) {
+		screen_return();
+	}
+	else if (evt->press_type == SHORT_PRESS) {
 
 		switch (evt->button) {
 

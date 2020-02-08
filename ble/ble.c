@@ -20,6 +20,7 @@
 #include "app_time.h"
 #include "status.h"
 #include "ble_protocol.h"
+#include "ble_watch_service.h"
 
 
 #define IS_SRVC_CHANGED_CHARACT_PRESENT 0                                           /**< Include the service_changed characteristic. If not enabled, the server's database cannot be changed for the lifetime of the device. */
@@ -46,9 +47,10 @@
 
 
 static ble_nus_t                        m_nus;                                      /**< Structure to identify the Nordic UART Service. */
+static ble_watchs_t                     m_watchs;
 static uint16_t                         m_conn_handle = BLE_CONN_HANDLE_INVALID;    /**< Handle of the current connection. */
-
 static ble_uuid_t                       m_adv_uuids[] = {{BLE_UUID_NUS_SERVICE, NUS_SERVICE_UUID_TYPE}};  /**< Universally unique service identifier. */
+//static ble_uuid_t                       m_adv_uuids[] = {{BLE_UUID_WATCH_SERVICE, BLE_UUID_TYPE_VENDOR_BEGIN}};  /**< Universally unique service identifier. */
 
 /**@brief Function for assert macro callback.
  *
@@ -132,6 +134,9 @@ void services_init(void)
 
     err_code = ble_nus_init(&m_nus, &nus_init);
     APP_ERROR_CHECK(err_code);
+
+//    err_code = ble_watchs_init(&m_watchs);
+//    APP_ERROR_CHECK(err_code);
 }
 
 

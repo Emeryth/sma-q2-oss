@@ -15,7 +15,8 @@
 #include "buttons.h"
 #include "icon.h"
 
-void draw_watchface(void);
+void watchface_process(void);
+void watchface_draw(void);
 void draw_statusbar(uint8_t draw_time);
 void watchface_handler(void *p_context);
 void watchface_handle_button_evt(button_event_t *evt);

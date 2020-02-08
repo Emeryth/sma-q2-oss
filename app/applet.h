@@ -14,10 +14,26 @@
 typedef struct{
 
 	int id;
+	void (*process_applet)(void);
 	void (*draw_applet)(void);
 	void (*handle_button_evt)(button_event_t *evt);
+	void (*enter_applet)(void);
+	void (*exit_applet)(void);
+	int previous_applet;
 
 
 }applet_t;
+
+enum applet_id{
+	APPLET_WATCHFACE,
+	APPLET_MENU,
+	APPLET_TETRIS,
+	APPLET_HRM,
+	APPLET_MUSIC,
+	APPLET_BATTERY,
+	NUM_APPLETS
+};
+
+extern applet_t applets[NUM_APPLETS];
 
 #endif /* APP_APPLET_H_ */

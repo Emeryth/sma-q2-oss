@@ -46,6 +46,7 @@
 #include "app_util_platform.h"
 #include "nrf_assert.h"
 
+#include "utf8proc.h"
 
 
 static inline void pixel_draw(nrf_lcd_t const * p_instance,
@@ -153,12 +154,12 @@ static void line_draw(nrf_lcd_t const * p_instance,
 
 static void write_character(nrf_lcd_t const * p_instance,
                             nrf_gfx_font_desc_t const * p_font,
-                            uint8_t character,
+                            uint16_t character,
                             uint16_t * p_x,
                             uint16_t y,
                             uint16_t font_color)
 {
-    uint8_t char_idx = character - p_font->startChar;
+    uint16_t char_idx = character - p_font->startChar;
     uint16_t bytes_in_line = CEIL_DIV(p_font->charInfo[char_idx].widthBits, 8);
 
     if (character == ' ')
@@ -598,6 +599,72 @@ ret_code_t nrf_gfx_print(nrf_lcd_t const * p_instance,
             }
 
             if (y > (nrf_gfx_height_get(p_instance) - p_font->height))
+            {
+                break;
+            }
+        }
+    }
+
+    return NRF_SUCCESS;
+}
+
+ret_code_t nrf_gfx_print_box_utf8(nrf_lcd_t const * p_instance,
+						nrf_gfx_rect_t const * p_box,
+                         uint16_t font_color,
+                         const char * string,
+                         const nrf_gfx_font_desc_t * p_font,
+                         bool wrap)
+{
+    ASSERT(p_instance != NULL);
+    ASSERT(p_instance->p_lcd_cb->state != NRF_DRV_STATE_UNINITIALIZED);
+    ASSERT(p_point != NULL);
+    ASSERT(string != NULL);
+    ASSERT(p_font != NULL);
+
+    uint16_t x = p_box->x;
+    uint16_t y = p_box->y;
+
+    if (y > (nrf_gfx_height_get(p_instance) - p_font->height))
+    {
+        // Not enough space to write even single char.
+        return NRF_ERROR_INVALID_PARAM;
+    }
+
+    utf8proc_int32_t character;
+
+    for (size_t i = 0; string[i] != '\0' ; i++)
+    {
+    	utf8proc_iterate((uint8_t*)(string+i),-1,&character);
+
+        if (character == '\n')
+        {
+            x = p_box->x;
+            y += p_font->height + p_font->height / 10;
+        }
+        else
+        {
+            write_character(p_instance, p_font, character, &x, y, font_color);
+        }
+
+        uint16_t char_idx = character - p_font->startChar;
+        uint16_t char_width = character == ' ' ? (p_font->height / 2) :
+                                                p_font->charInfo[char_idx].widthBits;
+
+        if (x > (nrf_gfx_width_get(p_instance) - char_width)||x>(p_box->x+p_box->width - char_width))
+        {
+            if (wrap)
+            {
+                x = p_box->x;
+                y += p_font->height - p_font->height / 5;
+//                y += p_font->height;
+
+            }
+            else
+            {
+                break;
+            }
+
+            if (y > (nrf_gfx_height_get(p_instance) - p_font->height)||y>(p_box->y+p_box->height-p_font->height))
             {
                 break;
             }

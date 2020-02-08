@@ -117,15 +117,21 @@ $(abspath ../gfx/fonts/m1mn_48.c) \
 $(abspath ../gfx/icons.c) \
 $(abspath ../gfx/icon_data.c) \
 $(abspath ../gfx/weather_data.c) \
+$(abspath ../app/applets.c) \
+$(abspath ../app/app_menu.c) \
 $(abspath ../app/app_time.c) \
 $(abspath ../app/app_hrm.c) \
 $(abspath ../app/app_music.c) \
+$(abspath ../app/app_battery.c) \
 $(abspath ../app/watchface.c) \
 $(abspath ../app/status.c) \
+$(abspath ../app/screen_mgr.c) \
 $(abspath ../app/tetris.c) \
 $(abspath ../app/weather.c) \
 $(abspath ../ble/ble.c) \
 $(abspath ../ble/ble_protocol.c) \
+$(abspath ../ble/ble_watch_service.c) \
+$(abspath ../lib/utf8proc.c) \
 
 #assembly files common to all targets
 ASM_SOURCE_FILES  = $(abspath $(COMPONENTS)/toolchain/gcc/gcc_startup_nrf52.s)
@@ -136,6 +142,7 @@ INC_PATHS += -I$(abspath ../gfx)
 INC_PATHS += -I$(abspath ../hardware)
 INC_PATHS += -I$(abspath ../app)
 INC_PATHS += -I$(abspath ../ble)
+INC_PATHS += -I$(abspath ../lib)
 INC_PATHS += -I$(abspath ../freertos/include)
 INC_PATHS += -I$(abspath $(COMPONENTS)/drivers_nrf/config)
 #INC_PATHS += -I$(abspath $(NRF5_SDK_PATH)/examples/bsp)
