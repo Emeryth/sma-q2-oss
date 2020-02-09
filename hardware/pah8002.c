@@ -798,4 +798,7 @@ void pah8002_shutdown(void){
 	_mode=NONE;
 	nrf_gpio_pin_clear(HRM_POWER_PIN);
 
+	nrf_drv_twi_disable(&m_twi_pah8002);
+	nrf_drv_twi_uninit(&m_twi_pah8002);
+	nrf_drv_gpiote_in_uninit(HRM_INT_PIN);
 }

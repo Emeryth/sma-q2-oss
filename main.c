@@ -322,7 +322,7 @@ static void vibration_task_handler(void * arg){
 static void hrm_task_handler(void * arg) {
 
 	uint32_t command = 0;
-	pah8002_init(hrm_task);
+//	pah8002_init(hrm_task);
 
 	for (;;) {
 		pah8002_task();

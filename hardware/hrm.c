@@ -20,6 +20,7 @@ void hrm_init(void){
 }
 
 void hrm_start(void){
+	pah8002_init(0);
 
 	nrf_gpio_pin_set(HRM_POWER_PIN);
 	vTaskDelay(500);
