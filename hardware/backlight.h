@@ -8,6 +8,11 @@
 #ifndef HARDWARE_BACKLIGHT_H_
 #define HARDWARE_BACKLIGHT_H_
 
+// Backlight intensity in PWM percent
+#define BACKLIGHT_INTENSITY 50
+// Default backlight on time in ms
+#define BACKLIGHT_TIME 3000
+
 void backlight_init(void);
 void backlight_on(void);
 
