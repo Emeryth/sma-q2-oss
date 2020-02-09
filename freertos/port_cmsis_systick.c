@@ -249,9 +249,10 @@ void vPortSuppressTicksAndSleep( TickType_t xExpectedIdleTime )
                 /* No SD -  we would just block interrupts globally.
                 * BASEPRI cannot be used for that because it would prevent WFE from wake up.
                 */
-                do{
-                    __WFE();
-                } while (0 == (NVIC->ISPR[0] | NVIC->ISPR[1]));
+//                do{
+//                    __WFE();
+//                } while (0 == (NVIC->ISPR[0] | NVIC->ISPR[1]));
+                sd_app_evt_wait();
             }
         }
         configPOST_SLEEP_PROCESSING( xExpectedIdleTime );

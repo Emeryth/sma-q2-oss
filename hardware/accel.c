@@ -26,7 +26,6 @@ void accel_init(void) {
 	vTaskDelay(200);
 
 	nrf_drv_twi_init(&m_twi_kx022, NULL, NULL, NULL);
-
 	nrf_drv_twi_enable(&m_twi_kx022);
 
 	txbuf[0]=KX022_WHO_AM_I;
@@ -68,6 +67,13 @@ void accel_init(void) {
 
 	nrf_drv_twi_tx(&m_twi_kx022,KX022_ADDR,txbuf,2,false);
 
+
+	nrf_drv_twi_uninit(&m_twi_kx022);
+	// Workaround for anomaly 89
+	*(volatile uint32_t *)0x40004FFC = 0;
+	*(volatile uint32_t *)0x40004FFC;
+	*(volatile uint32_t *)0x40004FFC = 1;
+
 	vTaskDelay(50);
 }
 
@@ -75,6 +81,9 @@ void accel_init(void) {
 int accel_check(void) {
 
 	int event=0;
+
+	nrf_drv_twi_init(&m_twi_kx022, NULL, NULL, NULL);
+	nrf_drv_twi_enable(&m_twi_kx022);
 
 	// Check interrupt
 	txbuf[0] = KX022_STATUS_REG;
@@ -106,6 +115,12 @@ int accel_check(void) {
 		nrf_drv_twi_rx(&m_twi_kx022, KX022_ADDR, rxbuf, 1);
 
 	}
+
+	nrf_drv_twi_uninit(&m_twi_kx022);
+	// Workaround for anomaly 89
+	*(volatile uint32_t *)0x40004FFC = 0;
+	*(volatile uint32_t *)0x40004FFC;
+	*(volatile uint32_t *)0x40004FFC = 1;
 
 	return event;
 

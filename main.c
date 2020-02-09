@@ -364,6 +364,8 @@ int main(void)
 
     // Initialize.
     APP_TIMER_INIT(APP_TIMER_PRESCALER, APP_TIMER_OP_QUEUE_SIZE, false);
+    NVIC_SetPriority(FPU_IRQn, APP_IRQ_PRIORITY_LOW);
+    NVIC_EnableIRQ(FPU_IRQn);
 
     nrf_drv_gpiote_init();
     buttons_init();
@@ -385,9 +387,6 @@ int main(void)
     battery_init();
     backlight_init();
     vibration_init();
-//    for (;;){
-//    __WFE();
-//    }
 
 //    printf("\r\nUART Start!\r\n");
     ble_stack_init();
@@ -398,10 +397,6 @@ int main(void)
 
     err_code = ble_advertising_start(BLE_ADV_MODE_SLOW);
     APP_ERROR_CHECK(err_code);
-    
-//    for (;;){
-//    __WFE();
-//    }
 
     xTaskCreate(watchface_task_handler, "watchface", configMINIMAL_STACK_SIZE+128, NULL, 1, &watchface_task);
     xTaskCreate(button_task_handler, "buttons", configMINIMAL_STACK_SIZE+32, NULL, 1, &button_task);

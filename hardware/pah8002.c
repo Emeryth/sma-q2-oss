@@ -800,5 +800,9 @@ void pah8002_shutdown(void){
 
 	nrf_drv_twi_disable(&m_twi_pah8002);
 	nrf_drv_twi_uninit(&m_twi_pah8002);
+	// Workaround for anomaly 89
+	*(volatile uint32_t *)0x40003FFC = 0;
+	*(volatile uint32_t *)0x40003FFC;
+	*(volatile uint32_t *)0x40003FFC = 1;
 	nrf_drv_gpiote_in_uninit(HRM_INT_PIN);
 }
