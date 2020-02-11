@@ -199,8 +199,8 @@ static void watchface_task_handler(void * arg) {
 	battery_timer = xTimerCreate("battery", 60000, pdTRUE, 0,
 			battery_timer_callback);
 	xTimerStart(battery_timer, portMAX_DELAY);
-	// Save battery charge every 30 min to make a graph
-	battery_history_timer = xTimerCreate("batteryh", 1000*1800, pdTRUE, 0,
+	// Save battery charge every 60 min to make a graph
+	battery_history_timer = xTimerCreate("batteryh", 1000*3600, pdTRUE, 0,
 			battery_history_timer_callback);
 	xTimerStart(battery_history_timer, portMAX_DELAY);
 	battery_sample();
