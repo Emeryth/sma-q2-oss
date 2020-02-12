@@ -9,6 +9,7 @@
 
 #include "ble_srv_common.h"
 #include "sdk_common.h"
+#include "ble_protocol.h"
 
 #define BLE_UUID_WATCHS_TX_CHARACTERISTIC 0x0002                      /**< The UUID of the TX Characteristic. */
 #define BLE_UUID_WATCHS_RX_CHARACTERISTIC 0x0003                      /**< The UUID of the RX Characteristic. */
@@ -57,6 +58,7 @@ static void on_write(ble_watchs_t * p_watchs, ble_evt_t * p_ble_evt)
             )
     {
 //        p_watchs->data_handler(p_watchs, p_evt_write->data, p_evt_write->len);
+    	ble_handle_message(p_evt_write->data,p_evt_write->len);
     }
     else
     {

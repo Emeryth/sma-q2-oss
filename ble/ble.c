@@ -46,11 +46,11 @@
 
 
 
-static ble_nus_t                        m_nus;                                      /**< Structure to identify the Nordic UART Service. */
+//static ble_nus_t                        m_nus;                                      /**< Structure to identify the Nordic UART Service. */
 static ble_watchs_t                     m_watchs;
 static uint16_t                         m_conn_handle = BLE_CONN_HANDLE_INVALID;    /**< Handle of the current connection. */
-static ble_uuid_t                       m_adv_uuids[] = {{BLE_UUID_NUS_SERVICE, NUS_SERVICE_UUID_TYPE}};  /**< Universally unique service identifier. */
-//static ble_uuid_t                       m_adv_uuids[] = {{BLE_UUID_WATCH_SERVICE, BLE_UUID_TYPE_VENDOR_BEGIN}};  /**< Universally unique service identifier. */
+//static ble_uuid_t                       m_adv_uuids[] = {{BLE_UUID_NUS_SERVICE, NUS_SERVICE_UUID_TYPE}};  /**< Universally unique service identifier. */
+static ble_uuid_t                       m_adv_uuids[] = {{BLE_UUID_WATCH_SERVICE, BLE_UUID_TYPE_VENDOR_BEGIN}};  /**< Universally unique service identifier. */
 
 /**@brief Function for assert macro callback.
  *
@@ -117,7 +117,7 @@ void nus_data_handler(ble_nus_t * p_nus, uint8_t * p_data, uint16_t length)
 
 void ble_send(uint8_t *data, uint16_t length){
 
-	ble_nus_string_send(&m_nus, data, length);
+//	ble_nus_string_send(&m_nus, data, length);
 }
 
 
@@ -132,11 +132,11 @@ void services_init(void)
 
     nus_init.data_handler = nus_data_handler;
 
-    err_code = ble_nus_init(&m_nus, &nus_init);
-    APP_ERROR_CHECK(err_code);
-
-//    err_code = ble_watchs_init(&m_watchs);
+//    err_code = ble_nus_init(&m_nus, &nus_init);
 //    APP_ERROR_CHECK(err_code);
+
+    err_code = ble_watchs_init(&m_watchs);
+    APP_ERROR_CHECK(err_code);
 }
 
 
@@ -269,7 +269,8 @@ void on_ble_evt(ble_evt_t * p_ble_evt)
 void ble_evt_dispatch(ble_evt_t * p_ble_evt)
 {
     ble_conn_params_on_ble_evt(p_ble_evt);
-    ble_nus_on_ble_evt(&m_nus, p_ble_evt);
+//    ble_nus_on_ble_evt(&m_nus, p_ble_evt);
+    ble_watchs_on_ble_evt(&m_watchs,p_ble_evt);
     on_ble_evt(p_ble_evt);
     ble_advertising_on_ble_evt(p_ble_evt);
 

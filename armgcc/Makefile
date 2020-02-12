@@ -132,6 +132,10 @@ $(abspath ../ble/ble.c) \
 $(abspath ../ble/ble_protocol.c) \
 $(abspath ../ble/ble_watch_service.c) \
 $(abspath ../lib/utf8proc.c) \
+$(abspath ../nanopb/pb_common.c) \
+$(abspath ../nanopb/pb_decode.c) \
+$(abspath ../nanopb/pb_encode.c) \
+$(abspath ../nanopb/smaq2oss.pb.c) \
 
 #assembly files common to all targets
 ASM_SOURCE_FILES  = $(abspath $(COMPONENTS)/toolchain/gcc/gcc_startup_nrf52.s)
@@ -144,6 +148,7 @@ INC_PATHS += -I$(abspath ../app)
 INC_PATHS += -I$(abspath ../ble)
 INC_PATHS += -I$(abspath ../lib)
 INC_PATHS += -I$(abspath ../freertos/include)
+INC_PATHS += -I$(abspath ../nanopb)
 INC_PATHS += -I$(abspath $(COMPONENTS)/drivers_nrf/config)
 #INC_PATHS += -I$(abspath $(NRF5_SDK_PATH)/examples/bsp)
 INC_PATHS += -I$(abspath $(COMPONENTS)/libraries/timer)
