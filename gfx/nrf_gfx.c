@@ -159,14 +159,15 @@ static void write_character(nrf_lcd_t const * p_instance,
                             uint16_t y,
                             uint16_t font_color)
 {
-    uint16_t char_idx = character - p_font->startChar;
-    uint16_t bytes_in_line = CEIL_DIV(p_font->charInfo[char_idx].widthBits, 8);
 
     if (character == ' ')
     {
         *p_x += p_font->height / 2;
         return;
     }
+
+    uint16_t char_idx = character - p_font->startChar;
+    uint16_t bytes_in_line = CEIL_DIV(p_font->charInfo[char_idx].widthBits, 8);
 
     for (uint16_t i = 0; i < p_font->height; i++)
     {
