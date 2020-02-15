@@ -16,6 +16,9 @@
 #include "app_error.h"
 #include "sma-q2.h"
 #include "FreeRTOS.h"
+#include "task.h"
+#include "timers.h"
+#include "semphr.h"
 #include "app_timer.h"
 #include "app_time.h"
 #include "status.h"
@@ -51,6 +54,10 @@ static ble_watchs_t                     m_watchs;
 static uint16_t                         m_conn_handle = BLE_CONN_HANDLE_INVALID;    /**< Handle of the current connection. */
 //static ble_uuid_t                       m_adv_uuids[] = {{BLE_UUID_NUS_SERVICE, NUS_SERVICE_UUID_TYPE}};  /**< Universally unique service identifier. */
 static ble_uuid_t                       m_adv_uuids[] = {{BLE_UUID_WATCH_SERVICE, BLE_UUID_TYPE_VENDOR_BEGIN}};  /**< Universally unique service identifier. */
+
+static SemaphoreHandle_t m_ble_event_ready;  /**< Semaphore raised if there is a new event to be processed in the BLE thread. */
+
+TaskHandle_t  m_ble_stack_thread;     /**< Definition of BLE stack thread. */
 
 /**@brief Function for assert macro callback.
  *
@@ -276,6 +283,25 @@ void ble_evt_dispatch(ble_evt_t * p_ble_evt)
 
 }
 
+/**
+ * @brief Event handler for new BLE events
+ *
+ * This function is called from the SoftDevice handler.
+ * It is called from interrupt level.
+ *
+ * @return The returned value is checked in the softdevice_handler module,
+ *         using the APP_ERROR_CHECK macro.
+ */
+static uint32_t ble_new_event_handler(void)
+{
+    BaseType_t yield_req = pdFALSE;
+    // The returned value may be safely ignored, if error is returned it only means that
+    // the semaphore is already given (raised).
+    UNUSED_VARIABLE(xSemaphoreGiveFromISR(m_ble_event_ready, &yield_req));
+    portYIELD_FROM_ISR(yield_req);
+    return NRF_SUCCESS;
+}
+
 
 /**@brief Function for the SoftDevice initialization.
  *
@@ -288,7 +314,8 @@ void ble_stack_init(void)
     nrf_clock_lf_cfg_t clock_lf_cfg = NRF_CLOCK_LFCLKSRC;
 
     // Initialize SoftDevice.
-    SOFTDEVICE_HANDLER_INIT(&clock_lf_cfg, NULL);
+//    SOFTDEVICE_HANDLER_INIT(&clock_lf_cfg, NULL);
+    SOFTDEVICE_HANDLER_INIT(&clock_lf_cfg, ble_new_event_handler);
 
     ble_enable_params_t ble_enable_params;
     err_code = softdevice_enable_get_default_config(CENTRAL_LINK_COUNT,
@@ -334,3 +361,35 @@ void advertising_init(void)
     APP_ERROR_CHECK(err_code);
 }
 
+void ble_stack_thread(void * arg)
+{
+    uint32_t  err_code;
+    bool      erase_bonds;
+
+    UNUSED_PARAMETER(arg);
+
+    m_ble_event_ready = xSemaphoreCreateBinary();
+    // Initialize.
+    ble_stack_init();
+    gap_params_init();
+    services_init();
+    advertising_init();
+    conn_params_init();
+
+    err_code = ble_advertising_start(BLE_ADV_MODE_SLOW);
+    APP_ERROR_CHECK(err_code);
+
+    while (1)
+    {
+        /* Wait for event from SoftDevice */
+        while(pdFALSE == xSemaphoreTake(m_ble_event_ready, portMAX_DELAY))
+        {
+            // Just wait again in the case when INCLUDE_vTaskSuspend is not enabled
+        }
+
+        // This function gets events from the SoftDevice and processes them by calling the function
+        // registered by softdevice_ble_evt_handler_set during stack initialization.
+        // In this code ble_evt_dispatch would be called for every event found.
+        intern_softdevice_events_execute();
+    }
+}

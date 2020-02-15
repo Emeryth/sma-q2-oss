@@ -14,8 +14,11 @@
 #define BLE_UUID_WATCHS_TX_CHARACTERISTIC 0x0002                      /**< The UUID of the TX Characteristic. */
 #define BLE_UUID_WATCHS_RX_CHARACTERISTIC 0x0003                      /**< The UUID of the RX Characteristic. */
 
-#define BLE_WATCHS_MAX_RX_CHAR_LEN        32        /**< Maximum length of the RX Characteristic (in bytes). */
+#define BLE_WATCHS_MAX_RX_CHAR_LEN        20        /**< Maximum length of the RX Characteristic (in bytes). */
 #define BLE_WATCHS_MAX_TX_CHAR_LEN        384        /**< Maximum length of the TX Characteristic (in bytes). */
+
+uint8_t write_buffer[BLE_WATCHS_MAX_TX_CHAR_LEN];
+ble_user_mem_block_t mem_block;
 
 //  51be0000-c182-4f3a-9359-21337bce51f6
 #define WATCHS_BASE_UUID                  {{0xF6, 0x51, 0xCE, 0x7B, 0x33, 0x21, 0x59, 0x93, 0x3A, 0x4F, 0x82, 0xC1, 0x00, 0x00, 0xBE, 0x51}}
@@ -32,9 +35,50 @@ static void on_disconnect(ble_watchs_t * p_watchs, ble_evt_t * p_ble_evt)
     p_watchs->conn_handle = BLE_CONN_HANDLE_INVALID;
 }
 
+static void handle_long_write(ble_watchs_t * p_watchs, ble_evt_t * p_ble_evt){
+
+	uint8_t *read_pointer=mem_block.p_mem;
+	uint8_t *write_pointer=mem_block.p_mem;
+
+	uint16_t handle;
+	uint16_t offset;
+	uint16_t length;
+	uint16_t total_len=0;
+
+	for(;;){
+		handle=*(uint16_t*)read_pointer;
+		if (handle!=p_watchs->tx_handles.value_handle){
+			break;
+		}
+		read_pointer+=2;
+		offset=*(uint16_t*)read_pointer;
+		read_pointer+=2;
+		length=*(uint16_t*)read_pointer;
+		read_pointer+=2;
+
+
+		memmove(write_pointer,read_pointer,length);
+		write_pointer+=length;
+		read_pointer+=length;
+		total_len+=length;
+
+	}
+
+	ble_handle_message(mem_block.p_mem,total_len);
+}
+
 static void on_write(ble_watchs_t * p_watchs, ble_evt_t * p_ble_evt)
 {
     ble_gatts_evt_write_t * p_evt_write = &p_ble_evt->evt.gatts_evt.params.write;
+
+	switch (p_evt_write->op) {
+	case BLE_GATTS_OP_WRITE_REQ:
+		break;
+	case BLE_GATTS_OP_EXEC_WRITE_REQ_NOW:
+		handle_long_write(p_watchs,p_ble_evt);
+		return;
+		break;
+	}
 
     if (
         (p_evt_write->handle == p_watchs->rx_handles.cccd_handle)
@@ -130,12 +174,14 @@ static uint32_t tx_char_add(ble_watchs_t * p_watchs)
     memset(&char_md, 0, sizeof(char_md));
 
     char_md.char_props.write         = 1;
-    char_md.char_props.write_wo_resp = 1;
+//    char_md.char_props.write_wo_resp = 1;
     char_md.p_char_user_desc         = NULL;
     char_md.p_char_pf                = NULL;
     char_md.p_user_desc_md           = NULL;
     char_md.p_cccd_md                = NULL;
     char_md.p_sccd_md                = NULL;
+
+    char_md.char_ext_props.reliable_wr = 1;
 
     ble_uuid.type = p_watchs->uuid_type;
     ble_uuid.uuid = BLE_UUID_WATCHS_TX_CHARACTERISTIC;
@@ -157,6 +203,7 @@ static uint32_t tx_char_add(ble_watchs_t * p_watchs)
     attr_char_value.init_len  = 1;
     attr_char_value.init_offs = 0;
     attr_char_value.max_len   = BLE_WATCHS_MAX_TX_CHAR_LEN;
+//    attr_char_value.p_value = write_buffer;
 
     return sd_ble_gatts_characteristic_add(p_watchs->service_handle,
                                            &char_md,
@@ -184,6 +231,11 @@ void ble_watchs_on_ble_evt(ble_watchs_t * p_watchs, ble_evt_t * p_ble_evt)
 
         case BLE_GATTS_EVT_WRITE:
             on_write(p_watchs, p_ble_evt);
+            break;
+        case BLE_EVT_USER_MEM_REQUEST:
+            mem_block.len = BLE_WATCHS_MAX_TX_CHAR_LEN;
+            mem_block.p_mem = &write_buffer[0];
+            sd_ble_user_mem_reply(p_watchs->conn_handle, &mem_block);
             break;
 
         default:

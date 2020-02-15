@@ -16,7 +16,10 @@
 #include "ble_conn_params.h"
 #include "softdevice_handler.h"
 #include "ble_nus.h"
+#include "FreeRTOS.h"
+#include "task.h"
 
+extern TaskHandle_t  m_ble_stack_thread;
 
 void gap_params_init(void);
 void nus_data_handler(ble_nus_t * p_nus, uint8_t * p_data, uint16_t length);
@@ -29,5 +32,6 @@ void on_ble_evt(ble_evt_t * p_ble_evt);
 void ble_evt_dispatch(ble_evt_t * p_ble_evt);
 void ble_stack_init(void);
 void advertising_init(void);
+void ble_stack_thread(void * arg);
 
 #endif /* BLE_BLE_INIT_H_ */

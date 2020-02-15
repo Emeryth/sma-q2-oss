@@ -1,0 +1,3 @@
+MusicInfo.artist 		max_size:32
+MusicInfo.album 		max_size:32
+MusicInfo.track 		max_size:64

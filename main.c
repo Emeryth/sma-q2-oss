@@ -389,20 +389,21 @@ int main(void)
     vibration_init();
 
 //    printf("\r\nUART Start!\r\n");
-    ble_stack_init();
-    gap_params_init();
-    services_init();
-    advertising_init();
-    conn_params_init();
-
-    err_code = ble_advertising_start(BLE_ADV_MODE_SLOW);
-    APP_ERROR_CHECK(err_code);
+//    ble_stack_init();
+//    gap_params_init();
+//    services_init();
+//    advertising_init();
+//    conn_params_init();
+//
+//    err_code = ble_advertising_start(BLE_ADV_MODE_SLOW);
+//    APP_ERROR_CHECK(err_code);
 
     xTaskCreate(watchface_task_handler, "watchface", configMINIMAL_STACK_SIZE+128, NULL, 1, &watchface_task);
     xTaskCreate(button_task_handler, "buttons", configMINIMAL_STACK_SIZE+32, NULL, 1, &button_task);
     xTaskCreate(time_task_handler, "time", configMINIMAL_STACK_SIZE+32, NULL, 1, &time_task);
     xTaskCreate(vibration_task_handler, "vibration", configMINIMAL_STACK_SIZE+32, NULL, 1, &vibration_task);
     xTaskCreate(hrm_task_handler, "hrm", configMINIMAL_STACK_SIZE+128, NULL, 1, &hrm_task);
+    xTaskCreate(ble_stack_thread, "ble", configMINIMAL_STACK_SIZE+512, NULL, 1, &m_ble_stack_thread);
 
     vTaskStartScheduler();
 

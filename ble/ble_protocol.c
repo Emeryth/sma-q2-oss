@@ -16,29 +16,52 @@
 #include "weather.h"
 #include "pb_decode.h"
 #include "smaq2oss.pb.h"
+#include "app_music.h"
 
+MusicInfo music_info = MusicInfo_init_zero;
+
+static void on_set_time(uint8_t * p_data, uint16_t length) {
+	int status;
+
+	SetTime set_time = SetTime_init_zero;
+	pb_istream_t stream = pb_istream_from_buffer(p_data, length);
+	status = pb_decode(&stream, SetTime_fields, &set_time);
+	if (status) {
+		set_date(set_time.timestamp);
+	}
+}
+
+
+static void on_set_music_info(uint8_t * p_data, uint16_t length) {
+	int status;
+
+	pb_istream_t stream = pb_istream_from_buffer(p_data, length);
+	status = pb_decode(&stream, MusicInfo_fields, &music_info);
+
+	if (status) {
+		music_set_music_info(&music_info);
+	}
+}
 
 void ble_handle_message( uint8_t * p_data, uint16_t length){
 
 	uint8_t msg_type=p_data[0];
-	int status;
+	p_data++;
+	length--;
 
-    if (msg_type==MSG_SET_TIME){
-    	uint32_t date;
-//    	memcpy(&date,p_data+1,4);
-    	SetTime set_time = SetTime_init_zero;
-    	pb_istream_t stream = pb_istream_from_buffer(p_data+1, length-1);
-    	status = pb_decode(&stream, SetTime_fields, &set_time);
-
-    	if (status){
-    		set_date(set_time.timestamp);
-    	}
-
-
-    }
-    else if(msg_type==MSG_SET_WEATHER){
-    	weather_set(p_data);
-    }
+	switch (msg_type) {
+		case MSG_SET_TIME:
+			on_set_time(p_data,length);
+			break;
+		case MSG_SET_WEATHER:
+			weather_set(p_data);
+			break;
+		case MSG_SET_MUSIC_INFO:
+			on_set_music_info(p_data,length);
+			break;
+		default:
+			break;
+	}
 
 }
 
