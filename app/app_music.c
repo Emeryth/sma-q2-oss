@@ -49,10 +49,6 @@ void music_draw(void){
     nrf_gfx_print_box_utf8(p_lcd, &title_start, BLACK, music_info.track, title_font, true);
     nrf_gfx_print_box_utf8(p_lcd, &album_start, BLACK, music_info.album, album_font, true);
 
-//	nrf_gfx_print_box_utf8(p_lcd, &artist_start, BLACK, "test", artist_font, true);
-//    nrf_gfx_print_box_utf8(p_lcd, &title_start, BLACK, "test test", title_font, true);
-//    nrf_gfx_print_box_utf8(p_lcd, &album_start, BLACK, "asdf", album_font, true);
-
 	nrf_gfx_rect_t sidebar_bg=NRF_GFX_RECT(LCD_WIDTH-24,20,24,LCD_HEIGHT);
 	nrf_gfx_rect_draw(p_lcd,&sidebar_bg,0,BLACK,true);
 

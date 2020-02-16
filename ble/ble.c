@@ -106,25 +106,11 @@ void gap_params_init(void)
 }
 
 
-/**@brief Function for handling the data from the Nordic UART Service.
- *
- * @details This function will process the data received from the Nordic UART BLE Service and send
- *          it to the UART module.
- *
- * @param[in] p_nus    Nordic UART Service structure.
- * @param[in] p_data   Data to be send to UART module.
- * @param[in] length   Length of the data.
- */
-/**@snippet [Handling the data received over BLE] */
-void nus_data_handler(ble_nus_t * p_nus, uint8_t * p_data, uint16_t length)
-{
-	ble_handle_message(p_data,length);
-}
 /**@snippet [Handling the data received over BLE] */
 
 void ble_send(uint8_t *data, uint16_t length){
 
-//	ble_nus_string_send(&m_nus, data, length);
+	ble_watchs_send(&m_watchs, data, length);
 }
 
 
@@ -133,14 +119,6 @@ void ble_send(uint8_t *data, uint16_t length){
 void services_init(void)
 {
     uint32_t       err_code;
-    ble_nus_init_t nus_init;
-
-    memset(&nus_init, 0, sizeof(nus_init));
-
-    nus_init.data_handler = nus_data_handler;
-
-//    err_code = ble_nus_init(&m_nus, &nus_init);
-//    APP_ERROR_CHECK(err_code);
 
     err_code = ble_watchs_init(&m_watchs);
     APP_ERROR_CHECK(err_code);
