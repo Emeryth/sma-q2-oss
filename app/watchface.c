@@ -12,6 +12,7 @@
 #include "status.h"
 #include "weather.h"
 #include "screen_mgr.h"
+#include "vibration.h"
 
 static const nrf_gfx_font_desc_t * p_font = &m1cthin_12ptFontInfo;
 static const nrf_gfx_font_desc_t * p_digit_font = &m1mn_48ptFontInfo;
@@ -122,6 +123,15 @@ void watchface_handle_button_evt(button_event_t *evt) {
 	}
 	else if (evt->button == BUTTON_OK && evt->press_type == SHORT_PRESS_RELEASE) {
 		screen_switch(APPLET_MENU);
+	}
+//	else if (evt->button == BUTTON_DOWN && evt->press_type == SHORT_PRESS_RELEASE) {
+//		vibration_notification();
+//	}
+//	else if (evt->button == BUTTON_UP && evt->press_type == SHORT_PRESS_RELEASE) {
+//		vibration_call();
+//	}
+	else if (evt->button == BUTTON_BACK && evt->press_type == SHORT_PRESS_RELEASE) {
+		vibration_stop();
 	}
 
 	screen_redraw_request();

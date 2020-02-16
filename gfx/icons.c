@@ -22,6 +22,8 @@ icon_t icons[NUM_ICONS]={
 		{.id=ICON_VOL_UP,.x=8,.y=6,.w=2,.h=2,.data=icons_dat},
 		{.id=ICON_TETRIS,.x=10,.y=6,.w=2,.h=2,.data=icons_dat},
 		{.id=ICON_BATTERY_MENU,.x=6,.y=2,.w=3,.h=2,.data=icons_dat},
+		{.id=ICON_OK,.x=0,.y=4,.w=2,.h=2,.data=icons_dat},
+		{.id=ICON_CANCEL,.x=2,.y=4,.w=2,.h=2,.data=icons_dat},
 
 };
 

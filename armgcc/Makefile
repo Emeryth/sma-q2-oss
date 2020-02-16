@@ -123,6 +123,7 @@ $(abspath ../app/app_time.c) \
 $(abspath ../app/app_hrm.c) \
 $(abspath ../app/app_music.c) \
 $(abspath ../app/app_battery.c) \
+$(abspath ../app/app_call.c) \
 $(abspath ../app/watchface.c) \
 $(abspath ../app/status.c) \
 $(abspath ../app/screen_mgr.c) \

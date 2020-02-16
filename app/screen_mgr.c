@@ -9,6 +9,7 @@
 #include "nrf_gfx.h"
 #include "lcd.h"
 #include "watchface.h"
+#include "app_call.h"
 
 static const nrf_lcd_t * p_lcd = &nrf_lcd_lpm013m126a;
 
@@ -30,6 +31,10 @@ static void periodic_refresh(void){
 }
 
 void screen_manage(void){
+
+	if (call_get_status()==CALL_INCOMING && current_screen.id!= APPLET_CALL){
+		screen_switch(APPLET_CALL);
+	}
 
 	periodic_refresh();
 	current_screen.process_applet();

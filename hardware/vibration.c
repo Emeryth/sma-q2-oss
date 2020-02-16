@@ -73,3 +73,18 @@ void vibration_short(void){
 	vibration_pattern_t vibr={.repeat=1,.pattern={60,0,0,0,0,0,0,0}};
 	vibration_set_pattern(vibr);
 }
+
+void vibration_stop(void){
+	vibration_pattern_t vibr={.repeat=0,.pattern={0,0,0,0,0,0,0,0}};
+	vibration_set_pattern(vibr);
+}
+
+void vibration_notification(void){
+	vibration_pattern_t vibr={.repeat=1,.pattern={100,100,0,100,100,0,0,0}};
+	vibration_set_pattern(vibr);
+}
+
+void vibration_call(void){
+	vibration_pattern_t vibr={.repeat=20,.pattern={100,100,100,100,0,0,0,0}};
+	vibration_set_pattern(vibr);
+}

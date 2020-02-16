@@ -20,6 +20,7 @@
 
 MusicInfo music_info = MusicInfo_init_zero;
 SetWeather set_weather = SetWeather_init_zero;
+CallNotification call_notif = CallNotification_init_zero;
 
 static void on_set_time(uint8_t * p_data, uint16_t length) {
 	int status;
@@ -55,6 +56,17 @@ static void on_set_weather(uint8_t * p_data, uint16_t length) {
 	}
 }
 
+static void on_call_notification(uint8_t * p_data, uint16_t length) {
+	int status;
+
+	pb_istream_t stream = pb_istream_from_buffer(p_data, length);
+	status = pb_decode(&stream, CallNotification_fields, &call_notif);
+
+	if (status) {
+		call_set_info(&call_notif);
+	}
+}
+
 void ble_handle_message( uint8_t * p_data, uint16_t length){
 
 	uint8_t msg_type=p_data[0];
@@ -70,6 +82,9 @@ void ble_handle_message( uint8_t * p_data, uint16_t length){
 			break;
 		case MSG_SET_MUSIC_INFO:
 			on_set_music_info(p_data,length);
+			break;
+		case MSG_CALL_NOTIFICATION:
+			on_call_notification(p_data,length);
 			break;
 		default:
 			break;
@@ -87,4 +102,15 @@ void ble_send_music_event(uint8_t evt){
 
 	ble_send(data,len);
 
+}
+
+void ble_send_call_command(uint8_t command){
+
+	uint16_t len=2;
+	uint8_t data[2];
+
+	data[0]=MSG_CALL_COMMAND;
+	data[1]=command;
+
+	ble_send(data,len);
 }
