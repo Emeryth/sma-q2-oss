@@ -14,9 +14,24 @@ static const nrf_lcd_t * p_lcd = &nrf_lcd_lpm013m126a;
 
 int redraw_requested;
 applet_t current_screen;
+struct tm previous_time;
+
+static void periodic_refresh(void){
+
+	if (previous_time.tm_hour!=time_date.tm_hour){
+		screen_redraw_request();
+	}
+	else if (previous_time.tm_min!=time_date.tm_min){
+		screen_redraw_request();
+	}
+
+	previous_time=time_date;
+
+}
 
 void screen_manage(void){
 
+	periodic_refresh();
 	current_screen.process_applet();
 
 	if (redraw_requested){

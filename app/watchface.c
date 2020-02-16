@@ -20,18 +20,9 @@ static const nrf_gfx_font_desc_t * p_weather_font_small = &m1c_14ptbFontInfo;
 static const nrf_lcd_t * p_lcd = &nrf_lcd_lpm013m126a;
 
 static char time_str[32];
-struct tm previous_time;
 
 void watchface_process(void){
 
-	if (previous_time.tm_hour!=time_date.tm_hour){
-		screen_redraw_request();
-	}
-	else if (previous_time.tm_min!=time_date.tm_min){
-		screen_redraw_request();
-	}
-
-	previous_time=time_date;
 }
 
 void watchface_draw(void) {
