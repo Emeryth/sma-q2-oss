@@ -19,6 +19,7 @@
 #include "app_music.h"
 
 MusicInfo music_info = MusicInfo_init_zero;
+SetWeather set_weather = SetWeather_init_zero;
 
 static void on_set_time(uint8_t * p_data, uint16_t length) {
 	int status;
@@ -43,6 +44,17 @@ static void on_set_music_info(uint8_t * p_data, uint16_t length) {
 	}
 }
 
+static void on_set_weather(uint8_t * p_data, uint16_t length) {
+	int status;
+
+	pb_istream_t stream = pb_istream_from_buffer(p_data, length);
+	status = pb_decode(&stream, SetWeather_fields, &set_weather);
+
+	if (status) {
+		weather_set(&set_weather);
+	}
+}
+
 void ble_handle_message( uint8_t * p_data, uint16_t length){
 
 	uint8_t msg_type=p_data[0];
@@ -54,7 +66,7 @@ void ble_handle_message( uint8_t * p_data, uint16_t length){
 			on_set_time(p_data,length);
 			break;
 		case MSG_SET_WEATHER:
-			weather_set(p_data);
+			on_set_weather(p_data,length);
 			break;
 		case MSG_SET_MUSIC_INFO:
 			on_set_music_info(p_data,length);

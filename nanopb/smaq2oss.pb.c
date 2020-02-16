@@ -12,10 +12,19 @@ PB_BIND(SetTime, SetTime, AUTO)
 PB_BIND(MusicControl, MusicControl, AUTO)
 
 
+PB_BIND(CallControl, CallControl, AUTO)
+
+
+PB_BIND(Forecast, Forecast, AUTO)
+
+
 PB_BIND(SetWeather, SetWeather, AUTO)
 
 
 PB_BIND(MessageNotification, MessageNotification, AUTO)
+
+
+PB_BIND(CallNotification, CallNotification, AUTO)
 
 
 PB_BIND(MusicInfo, MusicInfo, AUTO)

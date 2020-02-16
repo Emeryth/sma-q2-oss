@@ -9,16 +9,33 @@
 #define APP_WEATHER_H_
 
 #include <stdint.h>
+#include <time.h>
+#include "smaq2oss.pb.h"
 
-void weather_set(uint8_t *data);
+#define WEATHER_FORECAST_COUNT 3
+
+void weather_set(SetWeather *weather);
+
+typedef struct forecast{
+
+	int condition;
+	int8_t temperature_min;
+	int8_t temperature_max;
+	int8_t humidity;
+	struct tm date;
+
+}forecast_t;
 
 typedef struct weather{
 
-	uint8_t condition;
+	int timestamp;
+	int condition;
 	int8_t temperature;
 	int8_t temperature_min;
 	int8_t temperature_max;
 	int8_t humidity;
+	forecast_t forecasts[WEATHER_FORECAST_COUNT];
+	struct tm date;
 
 }weather_t;
 

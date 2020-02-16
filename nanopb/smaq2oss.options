@@ -1,3 +1,8 @@
+SetWeather.forecasts		max_count:3
+
 MusicInfo.artist 		max_size:32
 MusicInfo.album 		max_size:32
 MusicInfo.track 		max_size:64
+
+CallNotification.number		max_size:16
+CallNotification.name		max_size:32

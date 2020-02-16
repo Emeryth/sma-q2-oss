@@ -10,6 +10,18 @@ message MusicControl
     int32 music_event = 1;
 }
 
+message CallControl
+{
+    int32 call_event = 1;
+}
+
+message Forecast
+{
+	int32 condition = 1;
+    int32 temperature_min = 2;
+    int32 temperature_max = 3;
+}
+
 message SetWeather
 {
     int32 timestamp = 1;
@@ -18,15 +30,23 @@ message SetWeather
     int32 temperature_min = 4;
     int32 temperature_max = 5;
     int32 humidity = 6;
+    repeated Forecast forecasts = 7;
 }
 
 message MessageNotification
 {
     uint32 timestamp = 1;
     int32 type = 2;
-    string from = 3;
-    string title = 4;
-    string text = 5;
+    string sender = 3;
+    string subject = 4;
+    string body = 5;
+}
+
+message CallNotification
+{
+    string number = 1;
+    string name = 2;
+    int32 command = 3;
 }
 
 message MusicInfo
