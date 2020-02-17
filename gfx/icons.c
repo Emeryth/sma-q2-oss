@@ -32,5 +32,12 @@ icon_t weather_icons[NUM_WEATHER_ICONS]={
 		{.id=WEATHER_SUN,.x=0,.y=0,.w=4,.h=4,.data=weather_dat},
 		{.id=WEATHER_CLOUD,.x=4,.y=0,.w=4,.h=4,.data=weather_dat},
 		{.id=WEATHER_SUN_CLOUD,.x=8,.y=0,.w=4,.h=4,.data=weather_dat},
+		{.id=WEATHER_CLOUD_RAIN,.x=12,.y=0,.w=4,.h=4,.data=weather_dat},
+		{.id=WEATHER_SUN_CLOUD_RAIN,.x=0,.y=4,.w=4,.h=4,.data=weather_dat},
+		{.id=WEATHER_CLOUDS,.x=4,.y=4,.w=4,.h=4,.data=weather_dat},
+		{.id=WEATHER_CLOUDS_RAIN,.x=8,.y=4,.w=4,.h=4,.data=weather_dat},
+		{.id=WEATHER_CLOUDS_THUNDER,.x=12,.y=4,.w=4,.h=4,.data=weather_dat},
+		{.id=WEATHER_MIST,.x=0,.y=8,.w=4,.h=4,.data=weather_dat},
+		{.id=WEATHER_SNOW,.x=4,.y=8,.w=4,.h=4,.data=weather_dat},
 
 };

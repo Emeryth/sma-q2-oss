@@ -48,7 +48,7 @@ void watchface_draw(void) {
 	nrf_gfx_point_t temperature_max_start = NRF_GFX_POINT(120,124);
 	nrf_gfx_point_t temperature_min_start = NRF_GFX_POINT(120,146);
 
-	lcd_draw_icon(24, 128, weather_icons[WEATHER_SUN_CLOUD]);
+	lcd_draw_icon(24, 128, weather_icons[weather_condition_to_icon(weather_current.condition)]);
 
 	snprintf(time_str, sizeof(time_str), "%d\xB0",weather_current.temperature);
 	nrf_gfx_print(p_lcd, &temperature_start, WHITE, time_str, p_weather_font, true);

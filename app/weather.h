@@ -15,6 +15,7 @@
 #define WEATHER_FORECAST_COUNT 3
 
 void weather_set(SetWeather *weather);
+int weather_condition_to_icon(int condition);
 
 typedef struct forecast{
 
