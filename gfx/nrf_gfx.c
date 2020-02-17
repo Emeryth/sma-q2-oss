@@ -647,9 +647,17 @@ ret_code_t nrf_gfx_print_box_utf8(nrf_lcd_t const * p_instance,
             write_character(p_instance, p_font, character, &x, y, font_color);
         }
 
-        uint16_t char_idx = character - p_font->startChar;
-        uint16_t char_width = character == ' ' ? (p_font->height / 2) :
-                                                p_font->charInfo[char_idx].widthBits;
+		uint16_t char_idx;
+		uint16_t char_width;
+		if (character < p_font->startChar) {
+			char_width = 0;
+		} else {
+			char_idx = character - p_font->startChar;
+			char_width =
+					character == ' ' ?
+							(p_font->height / 2) :
+							p_font->charInfo[char_idx].widthBits;
+		}
 
         if (x > (nrf_gfx_width_get(p_instance) - char_width)||x>(p_box->x+p_box->width - char_width))
         {

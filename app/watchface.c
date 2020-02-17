@@ -124,9 +124,9 @@ void watchface_handle_button_evt(button_event_t *evt) {
 	else if (evt->button == BUTTON_OK && evt->press_type == SHORT_PRESS_RELEASE) {
 		screen_switch(APPLET_MENU);
 	}
-//	else if (evt->button == BUTTON_DOWN && evt->press_type == SHORT_PRESS_RELEASE) {
-//		vibration_notification();
-//	}
+	else if (evt->button == BUTTON_DOWN && evt->press_type == SHORT_PRESS_RELEASE) {
+		screen_switch(APPLET_WEATHER);
+	}
 //	else if (evt->button == BUTTON_UP && evt->press_type == SHORT_PRESS_RELEASE) {
 //		vibration_call();
 //	}
