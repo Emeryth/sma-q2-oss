@@ -632,10 +632,18 @@ ret_code_t nrf_gfx_print_box_utf8(nrf_lcd_t const * p_instance,
     }
 
     utf8proc_int32_t character;
+    int8_t bytes_read=0;
 
-    for (size_t i = 0; string[i] != '\0' ; i++)
+    for (size_t i = 0; string[i] != '\0' ; i+=bytes_read)
     {
-    	utf8proc_iterate((uint8_t*)(string+i),-1,&character);
+    	bytes_read=utf8proc_iterate((uint8_t*)(string+i),-1,&character);
+    	if (bytes_read<1){
+    		return NRF_ERROR_INVALID_DATA;
+    	}
+
+    	if (character>p_font->endChar){
+    		character='?';
+    	}
 
         if (character == '\n')
         {
