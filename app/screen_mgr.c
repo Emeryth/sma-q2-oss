@@ -37,7 +37,9 @@ void screen_manage(void){
 	}
 
 	periodic_refresh();
-	current_screen.process_applet();
+	if (current_screen.process_applet != NULL) {
+		current_screen.process_applet();
+	}
 
 	if (redraw_requested){
 		current_screen.draw_applet();
