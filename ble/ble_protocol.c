@@ -41,7 +41,7 @@ static void on_set_music_info(uint8_t * p_data, uint16_t length) {
 	status = pb_decode(&stream, MusicInfo_fields, &music_info);
 
 	if (status) {
-		music_set_music_info(&music_info);
+		music_set_music_info((music_info_t *)&music_info);
 	}
 }
 

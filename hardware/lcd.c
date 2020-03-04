@@ -59,7 +59,7 @@ void lcd_draw_pixel(uint16_t x, uint16_t y, uint8_t color){
 	lcd_buffer[y][x/2]= pixel ^ ((pixel ^ color) & mask);
 }
 
-inline void lcd_draw_8pix(uint8_t x,uint8_t y, uint32_t line){
+static inline void lcd_draw_8pix(uint8_t x,uint8_t y, uint32_t line){
 
 	uint32_t *lcd=(uint32_t *)&lcd_buffer[y][x];
 

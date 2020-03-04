@@ -210,7 +210,7 @@ static void watchface_task_handler(void * arg) {
 	uint8_t random[1];
 	vTaskDelay(500);
 	sd_rand_application_vector_get(random, 1);
-	srand48(random[0]);
+	srand(random[0]);
 	button_event_t evt;
 
 	xLastWakeTime = xTaskGetTickCount();

@@ -27,7 +27,7 @@ enum music_control_state{
 };
 
 int control_state=SKIP_STATE;
-music_info_t music_info;
+static music_info_t music_info;
 int refresh=0;
 
 void music_process(void){

@@ -14,8 +14,8 @@
 #include "task.h"
 
 static const nrf_drv_twi_t m_twi_kx022 = NRF_DRV_TWI_INSTANCE(1);
-uint8_t txbuf[8];
-uint8_t rxbuf[8];
+static uint8_t txbuf[8];
+static uint8_t rxbuf[8];
 
 void accel_init(void) {
 

@@ -142,8 +142,8 @@ float __hardfp_log10f(float x) {
 #define I2C_ID_PAH8002  0x15  //I2C 7-bit ID
 
 static const nrf_drv_twi_t m_twi_pah8002 = NRF_DRV_TWI_INSTANCE(0);
-uint8_t txbuf[8];
-uint8_t rxbuf[8];
+static uint8_t txbuf[8];
+static uint8_t rxbuf[8];
 
 
 

@@ -17,6 +17,10 @@
 #include "hrm.h"
 #include "screen_mgr.h"
 
+static int hrm_values[HRM_BUFFER_WIDTH];
+static q31_t hrm_graph[HRM_GRAPH_WIDTH];
+static int hrm_command;
+
 static const nrf_lcd_t * p_lcd = &nrf_lcd_lpm013m126a;
 static const nrf_gfx_font_desc_t * p_font = &orkney_8ptFontInfo;
 
@@ -34,7 +38,7 @@ q31_t output[FFT_LENGTH*2];
 
 #define FILTER_TAP_NUM 128
 
-const static q31_t filter_taps[FILTER_TAP_NUM] = { -8987, -10586, -7960, -1330,
+static q31_t filter_taps[FILTER_TAP_NUM] = { -8987, -10586, -7960, -1330,
 		7005, 13578, 15431, 11844, 5094, -434, -694, 5220, 13660, 17727, 11115,
 		-7441, -31957, -51218, -54630, -38879, -11143, 13887, 22393, 10656,
 		-10842, -22081, -5466, 41501, 101013, 141969, 136799, 78990, -9738,
@@ -94,7 +98,7 @@ arm_biquad_cascade_df2T_instance_f32 iir_inst =
 
 #define DC_BLOCK_PARAM 700/1000
 
-float hr=60.0;
+static float hr=60.0;
 static char hr_str[32];
 float avgi=1;
 float w=0.1;

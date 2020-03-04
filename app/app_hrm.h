@@ -19,8 +19,7 @@
 
 #define FFT_LENGTH 128
 
-int hrm_values[HRM_BUFFER_WIDTH];
-q31_t hrm_graph[HRM_GRAPH_WIDTH];
+
 //q31_t hrm_graph_ac[HRM_GRAPH_WIDTH*2];
 //q31_t hrm_graph_filtered[HRM_GRAPH_WIDTH];
 //float32_t hrm_graph_unfiltered[HRM_GRAPH_WIDTH];
@@ -28,7 +27,7 @@ q31_t hrm_graph[HRM_GRAPH_WIDTH];
 
 extern TaskHandle_t  hrm_task;
 
-int hrm_command;
+
 
 void hrm_process(void);
 void hrm_draw(void);

@@ -62,4 +62,5 @@ void lcd_clear_lines(uint8_t start, uint8_t end,uint32_t color);
 void lcd_draw_icon(uint8_t x,uint8_t y, icon_t icon);
 void lcd_draw_small_num(uint8_t x,uint8_t y, uint8_t num);
 
+
 #endif /* HARDWARE_LCD_H_ */

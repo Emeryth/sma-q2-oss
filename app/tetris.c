@@ -82,8 +82,8 @@ void stampblock() {
 }
 
 void genblock() {
-	curfig = lrand48() % figs;
-	curfigx = lrand48() % (swidth - figw);
+	curfig = rand() % figs;
+	curfigx = rand() % (swidth - figw);
 	curfigy = 0;
 }
 
