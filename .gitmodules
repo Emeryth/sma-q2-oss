@@ -1,0 +1,3 @@
+[submodule "nRF5_SDK_11.0.0_89a8197"]
+	path = nRF5_SDK_11.0.0_89a8197
+	url = https://github.com/dretay/nRF5_SDK_11.0.0_89a8197.git
