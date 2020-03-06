@@ -9,3 +9,6 @@
 *.zip
 components
 armgcc/_build
+Objects/
+RTE/
+Listings/

@@ -335,7 +335,7 @@
               <MiscControls></MiscControls>
               <Define>NRF52 SOFTDEVICE_PRESENT BOARD_CUSTOM NRF52_PAN_12 NRF52_PAN_15 NRF52_PAN_58 NRF52_PAN_55 NRF52_PAN_54 NRF52_PAN_31 NRF52_PAN_30 NRF52_PAN_51 NRF52_PAN_36 NRF52_PAN_53 S132 CONFIG_GPIO_AS_PINRESET BLE_STACK_SUPPORT_REQD SWI_DISABLE0 NRF52_PAN_20 NRF52_PAN_64 NRF52_PAN_62 NRF52_PAN_63 ARM_MATH_CM4 __HEAP_SIZE=512 FREERTOS</Define>
               <Undefine></Undefine>
-               <IncludePath>.\config;.\gfx;.\hardware;.\app;.\ble;.\lib;.\nanopb;.\gfx\fonts;.\nRF5_SDK_11.0.0_89a8197\components\ble\ble_advertising;.\nRF5_SDK_11.0.0_89a8197\components\ble\ble_services\ble_bas;.\nRF5_SDK_11.0.0_89a8197\components\ble\ble_services\ble_dis;.\nRF5_SDK_11.0.0_89a8197\components\ble\ble_services\ble_nus;.\nRF5_SDK_11.0.0_89a8197\components\ble\common;.\nRF5_SDK_11.0.0_89a8197\components\ble\device_manager;.\nRF5_SDK_11.0.0_89a8197\components\ble\device_manager\config;.\nRF5_SDK_11.0.0_89a8197\components\device;.\nRF5_SDK_11.0.0_89a8197\components\drivers_nrf\clock;.\nRF5_SDK_11.0.0_89a8197\components\drivers_nrf\common;.\nRF5_SDK_11.0.0_89a8197\components\drivers_nrf\config;.\nRF5_SDK_11.0.0_89a8197\components\drivers_nrf\delay;.\nRF5_SDK_11.0.0_89a8197\components\drivers_nrf\gpiote;.\nRF5_SDK_11.0.0_89a8197\components\drivers_nrf\hal;.\nRF5_SDK_11.0.0_89a8197\components\drivers_nrf\ppi;.\nRF5_SDK_11.0.0_89a8197\components\drivers_nrf\pstorage;.\nRF5_SDK_11.0.0_89a8197\components\drivers_nrf\saadc;.\nRF5_SDK_11.0.0_89a8197\components\drivers_nrf\spi_master;.\nRF5_SDK_11.0.0_89a8197\components\drivers_nrf\timer;.\nRF5_SDK_11.0.0_89a8197\components\drivers_nrf\twi_master;.\nRF5_SDK_11.0.0_89a8197\components\drivers_nrf\uart;.\nRF5_SDK_11.0.0_89a8197\components\drivers_nrf\wdt;.\nRF5_SDK_11.0.0_89a8197\components\libraries\button;.\nRF5_SDK_11.0.0_89a8197\components\libraries\experimental_section_vars;.\nRF5_SDK_11.0.0_89a8197\components\libraries\fifo;.\nRF5_SDK_11.0.0_89a8197\components\libraries\fstorage;.\nRF5_SDK_11.0.0_89a8197\components\libraries\fstorage\config;.\nRF5_SDK_11.0.0_89a8197\components\libraries\pwm;.\nRF5_SDK_11.0.0_89a8197\components\libraries\scheduler;.\nRF5_SDK_11.0.0_89a8197\components\libraries\timer;.\nRF5_SDK_11.0.0_89a8197\components\libraries\trace;.\nRF5_SDK_11.0.0_89a8197\components\libraries\uart;.\nRF5_SDK_11.0.0_89a8197\components\libraries\util;.\nRF5_SDK_11.0.0_89a8197\components\softdevice\common\softdevice_handler;.\nRF5_SDK_11.0.0_89a8197\components\softdevice\s132\headers;.\nRF5_SDK_11.0.0_89a8197\components\softdevice\s132\headers\nrf52;.\nRF5_SDK_11.0.0_89a8197\components\toolchain;.\nRF5_SDK_11.0.0_89a8197\external\freertos\config;.\nRF5_SDK_11.0.0_89a8197\external\freertos\portable\ARM\nrf52;.\nRF5_SDK_11.0.0_89a8197\external\freertos\portable\CMSIS\nrf52;.\nRF5_SDK_11.0.0_89a8197\external\freertos\source\include</IncludePath>
+              <IncludePath>.\config;.\gfx;.\hardware;.\app;.\ble;.\lib;.\nanopb;.\gfx\fonts;.\nRF5_SDK_11.0.0_89a8197\components\ble\ble_advertising;.\nRF5_SDK_11.0.0_89a8197\components\ble\ble_services\ble_bas;.\nRF5_SDK_11.0.0_89a8197\components\ble\ble_services\ble_dis;.\nRF5_SDK_11.0.0_89a8197\components\ble\ble_services\ble_nus;.\nRF5_SDK_11.0.0_89a8197\components\ble\common;.\nRF5_SDK_11.0.0_89a8197\components\ble\device_manager;.\nRF5_SDK_11.0.0_89a8197\components\ble\device_manager\config;.\nRF5_SDK_11.0.0_89a8197\components\device;.\nRF5_SDK_11.0.0_89a8197\components\drivers_nrf\clock;.\nRF5_SDK_11.0.0_89a8197\components\drivers_nrf\common;.\nRF5_SDK_11.0.0_89a8197\components\drivers_nrf\config;.\nRF5_SDK_11.0.0_89a8197\components\drivers_nrf\delay;.\nRF5_SDK_11.0.0_89a8197\components\drivers_nrf\gpiote;.\nRF5_SDK_11.0.0_89a8197\components\drivers_nrf\hal;.\nRF5_SDK_11.0.0_89a8197\components\drivers_nrf\ppi;.\nRF5_SDK_11.0.0_89a8197\components\drivers_nrf\pstorage;.\nRF5_SDK_11.0.0_89a8197\components\drivers_nrf\saadc;.\nRF5_SDK_11.0.0_89a8197\components\drivers_nrf\spi_master;.\nRF5_SDK_11.0.0_89a8197\components\drivers_nrf\timer;.\nRF5_SDK_11.0.0_89a8197\components\drivers_nrf\twi_master;.\nRF5_SDK_11.0.0_89a8197\components\drivers_nrf\uart;.\nRF5_SDK_11.0.0_89a8197\components\drivers_nrf\wdt;.\nRF5_SDK_11.0.0_89a8197\components\libraries\button;.\nRF5_SDK_11.0.0_89a8197\components\libraries\experimental_section_vars;.\nRF5_SDK_11.0.0_89a8197\components\libraries\fifo;.\nRF5_SDK_11.0.0_89a8197\components\libraries\fstorage;.\nRF5_SDK_11.0.0_89a8197\components\libraries\fstorage\config;.\nRF5_SDK_11.0.0_89a8197\components\libraries\pwm;.\nRF5_SDK_11.0.0_89a8197\components\libraries\scheduler;.\nRF5_SDK_11.0.0_89a8197\components\libraries\timer;.\nRF5_SDK_11.0.0_89a8197\components\libraries\trace;.\nRF5_SDK_11.0.0_89a8197\components\libraries\uart;.\nRF5_SDK_11.0.0_89a8197\components\libraries\util;.\nRF5_SDK_11.0.0_89a8197\components\softdevice\common\softdevice_handler;.\nRF5_SDK_11.0.0_89a8197\components\softdevice\s132\headers;.\nRF5_SDK_11.0.0_89a8197\components\softdevice\s132\headers\nrf52;.\nRF5_SDK_11.0.0_89a8197\components\toolchain;.\nRF5_SDK_11.0.0_89a8197\external\freertos\config;.\nRF5_SDK_11.0.0_89a8197\external\freertos\portable\ARM\nrf52;.\nRF5_SDK_11.0.0_89a8197\external\freertos\portable\CMSIS\nrf52;.\nRF5_SDK_11.0.0_89a8197\external\freertos\source\include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -724,6 +724,11 @@
               <FileType>1</FileType>
               <FilePath>.\nRF5_SDK_11.0.0_89a8197\components\ble\device_manager\device_manager_peripheral.c</FilePath>
             </File>
+            <File>
+              <FileName>ble_advdata.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\nRF5_SDK_11.0.0_89a8197\components\ble\common\ble_advdata.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -788,6 +793,11 @@
               <FileName>nrf_drv_clock.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\nRF5_SDK_11.0.0_89a8197\components\drivers_nrf\clock\nrf_drv_clock.c</FilePath>
+            </File>
+            <File>
+              <FileName>nrf_saadc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\nRF5_SDK_11.0.0_89a8197\components\drivers_nrf\hal\nrf_saadc.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -975,7 +985,7 @@
             <NotGenerated>0</NotGenerated>
             <InvalidFlash>1</InvalidFlash>
           </TargetStatus>
-          <OutputDirectory>.\components\softdevice\s132\hex\</OutputDirectory>
+          <OutputDirectory>.\nRF5_SDK_11.0.0_89a8197\components\softdevice\s132\hex\</OutputDirectory>
           <OutputName>s132_nrf52_2.0.0_softdevice.hex</OutputName>
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>
@@ -1263,7 +1273,7 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-               <IncludePath>.\config;.\gfx;.\hardware;.\app;.\ble;.\lib;.\nanopb;.\gfx\fonts;.\nRF5_SDK_11.0.0_89a8197\components\ble\ble_advertising;.\nRF5_SDK_11.0.0_89a8197\components\ble\ble_services\ble_bas;.\nRF5_SDK_11.0.0_89a8197\components\ble\ble_services\ble_dis;.\nRF5_SDK_11.0.0_89a8197\components\ble\ble_services\ble_nus;.\nRF5_SDK_11.0.0_89a8197\components\ble\common;.\nRF5_SDK_11.0.0_89a8197\components\ble\device_manager;.\nRF5_SDK_11.0.0_89a8197\components\ble\device_manager\config;.\nRF5_SDK_11.0.0_89a8197\components\device;.\nRF5_SDK_11.0.0_89a8197\components\drivers_nrf\clock;.\nRF5_SDK_11.0.0_89a8197\components\drivers_nrf\common;.\nRF5_SDK_11.0.0_89a8197\components\drivers_nrf\config;.\nRF5_SDK_11.0.0_89a8197\components\drivers_nrf\delay;.\nRF5_SDK_11.0.0_89a8197\components\drivers_nrf\gpiote;.\nRF5_SDK_11.0.0_89a8197\components\drivers_nrf\hal;.\nRF5_SDK_11.0.0_89a8197\components\drivers_nrf\ppi;.\nRF5_SDK_11.0.0_89a8197\components\drivers_nrf\pstorage;.\nRF5_SDK_11.0.0_89a8197\components\drivers_nrf\saadc;.\nRF5_SDK_11.0.0_89a8197\components\drivers_nrf\spi_master;.\nRF5_SDK_11.0.0_89a8197\components\drivers_nrf\timer;.\nRF5_SDK_11.0.0_89a8197\components\drivers_nrf\twi_master;.\nRF5_SDK_11.0.0_89a8197\components\drivers_nrf\uart;.\nRF5_SDK_11.0.0_89a8197\components\drivers_nrf\wdt;.\nRF5_SDK_11.0.0_89a8197\components\libraries\button;.\nRF5_SDK_11.0.0_89a8197\components\libraries\experimental_section_vars;.\nRF5_SDK_11.0.0_89a8197\components\libraries\fifo;.\nRF5_SDK_11.0.0_89a8197\components\libraries\fstorage;.\nRF5_SDK_11.0.0_89a8197\components\libraries\fstorage\config;.\nRF5_SDK_11.0.0_89a8197\components\libraries\pwm;.\nRF5_SDK_11.0.0_89a8197\components\libraries\scheduler;.\nRF5_SDK_11.0.0_89a8197\components\libraries\timer;.\nRF5_SDK_11.0.0_89a8197\components\libraries\trace;.\nRF5_SDK_11.0.0_89a8197\components\libraries\uart;.\nRF5_SDK_11.0.0_89a8197\components\libraries\util;.\nRF5_SDK_11.0.0_89a8197\components\softdevice\common\softdevice_handler;.\nRF5_SDK_11.0.0_89a8197\components\softdevice\s132\headers;.\nRF5_SDK_11.0.0_89a8197\components\softdevice\s132\headers\nrf52;.\nRF5_SDK_11.0.0_89a8197\components\toolchain;.\nRF5_SDK_11.0.0_89a8197\external\freertos\config;.\nRF5_SDK_11.0.0_89a8197\external\freertos\portable\ARM\nrf52;.\nRF5_SDK_11.0.0_89a8197\external\freertos\portable\CMSIS\nrf52;.\nRF5_SDK_11.0.0_89a8197\external\freertos\source\include</IncludePath>
+              <IncludePath>.\config;.\gfx;.\hardware;.\app;.\ble;.\lib;.\nanopb;.\gfx\fonts;.\nRF5_SDK_11.0.0_89a8197\components\ble\ble_advertising;.\nRF5_SDK_11.0.0_89a8197\components\ble\ble_services\ble_bas;.\nRF5_SDK_11.0.0_89a8197\components\ble\ble_services\ble_dis;.\nRF5_SDK_11.0.0_89a8197\components\ble\ble_services\ble_nus;.\nRF5_SDK_11.0.0_89a8197\components\ble\common;.\nRF5_SDK_11.0.0_89a8197\components\ble\device_manager;.\nRF5_SDK_11.0.0_89a8197\components\ble\device_manager\config;.\nRF5_SDK_11.0.0_89a8197\components\device;.\nRF5_SDK_11.0.0_89a8197\components\drivers_nrf\clock;.\nRF5_SDK_11.0.0_89a8197\components\drivers_nrf\common;.\nRF5_SDK_11.0.0_89a8197\components\drivers_nrf\config;.\nRF5_SDK_11.0.0_89a8197\components\drivers_nrf\delay;.\nRF5_SDK_11.0.0_89a8197\components\drivers_nrf\gpiote;.\nRF5_SDK_11.0.0_89a8197\components\drivers_nrf\hal;.\nRF5_SDK_11.0.0_89a8197\components\drivers_nrf\ppi;.\nRF5_SDK_11.0.0_89a8197\components\drivers_nrf\pstorage;.\nRF5_SDK_11.0.0_89a8197\components\drivers_nrf\saadc;.\nRF5_SDK_11.0.0_89a8197\components\drivers_nrf\spi_master;.\nRF5_SDK_11.0.0_89a8197\components\drivers_nrf\timer;.\nRF5_SDK_11.0.0_89a8197\components\drivers_nrf\twi_master;.\nRF5_SDK_11.0.0_89a8197\components\drivers_nrf\uart;.\nRF5_SDK_11.0.0_89a8197\components\drivers_nrf\wdt;.\nRF5_SDK_11.0.0_89a8197\components\libraries\button;.\nRF5_SDK_11.0.0_89a8197\components\libraries\experimental_section_vars;.\nRF5_SDK_11.0.0_89a8197\components\libraries\fifo;.\nRF5_SDK_11.0.0_89a8197\components\libraries\fstorage;.\nRF5_SDK_11.0.0_89a8197\components\libraries\fstorage\config;.\nRF5_SDK_11.0.0_89a8197\components\libraries\pwm;.\nRF5_SDK_11.0.0_89a8197\components\libraries\scheduler;.\nRF5_SDK_11.0.0_89a8197\components\libraries\timer;.\nRF5_SDK_11.0.0_89a8197\components\libraries\trace;.\nRF5_SDK_11.0.0_89a8197\components\libraries\uart;.\nRF5_SDK_11.0.0_89a8197\components\libraries\util;.\nRF5_SDK_11.0.0_89a8197\components\softdevice\common\softdevice_handler;.\nRF5_SDK_11.0.0_89a8197\components\softdevice\s132\headers;.\nRF5_SDK_11.0.0_89a8197\components\softdevice\s132\headers\nrf52;.\nRF5_SDK_11.0.0_89a8197\components\toolchain;.\nRF5_SDK_11.0.0_89a8197\external\freertos\config;.\nRF5_SDK_11.0.0_89a8197\external\freertos\portable\ARM\nrf52;.\nRF5_SDK_11.0.0_89a8197\external\freertos\portable\CMSIS\nrf52;.\nRF5_SDK_11.0.0_89a8197\external\freertos\source\include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -2196,6 +2206,11 @@
               <FileType>1</FileType>
               <FilePath>.\nRF5_SDK_11.0.0_89a8197\components\ble\device_manager\device_manager_peripheral.c</FilePath>
             </File>
+            <File>
+              <FileName>ble_advdata.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\nRF5_SDK_11.0.0_89a8197\components\ble\common\ble_advdata.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -2328,6 +2343,11 @@
               <FileName>nrf_drv_clock.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\nRF5_SDK_11.0.0_89a8197\components\drivers_nrf\clock\nrf_drv_clock.c</FilePath>
+            </File>
+            <File>
+              <FileName>nrf_saadc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\nRF5_SDK_11.0.0_89a8197\components\drivers_nrf\hal\nrf_saadc.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -3464,6 +3484,11 @@
               <FileType>1</FileType>
               <FilePath>.\nRF5_SDK_11.0.0_89a8197\components\ble\device_manager\device_manager_peripheral.c</FilePath>
             </File>
+            <File>
+              <FileName>ble_advdata.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\nRF5_SDK_11.0.0_89a8197\components\ble\common\ble_advdata.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -3528,6 +3553,11 @@
               <FileName>nrf_drv_clock.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\nRF5_SDK_11.0.0_89a8197\components\drivers_nrf\clock\nrf_drv_clock.c</FilePath>
+            </File>
+            <File>
+              <FileName>nrf_saadc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\nRF5_SDK_11.0.0_89a8197\components\drivers_nrf\hal\nrf_saadc.c</FilePath>
             </File>
           </Files>
         </Group>
