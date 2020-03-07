@@ -7,7 +7,7 @@ MAKEFILE_DIR := $(dir $(MAKEFILE_NAME) )
 
 #NRF5_SDK_PATH ?= $(HOME)/Software/nRF5_SDK_11.0.0_89a8197
 #COMPONENTS     = $(NRF5_SDK_PATH)/components
-COMPONENTS     = ../components
+COMPONENTS     = ../lib/nRF5_SDK_11.0.0_89a8197/components
 TEMPLATE_PATH = $(COMPONENTS)/toolchain/gcc
 
 ifeq ($(OS),Windows_NT)
