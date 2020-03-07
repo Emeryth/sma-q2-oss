@@ -12,6 +12,9 @@ else
 	MKDIR = mkdir -p
 	TARGET_EXTENSION=out
 endif
+#todo: on osx you need sed like this: sed -i ""
+
+OUTPUT_FILENAME = $(notdir $(shell pwd))
 
 #directories
 BUILD_DIR = build/
@@ -32,7 +35,6 @@ SRC_DEST = $(RELEASE_DIR)src/
 
 #non auto-included dirs
 LIB_DIRS += $(LIB_DIR)
-LIB_DIRS += $(SRC_DIRS)
 LIB_DIRS += $(LIB_DIR)/unity/src
 LIB_DIRS += $(LIB_DIR)/freertos/include
 LIB_DIRS += $(NRF5_SDK_DIR)/components/drivers_nrf/config
@@ -89,6 +91,7 @@ VALGRIND_SUPPS = $(CONFIG_DIR)valgrind.memcheck.supp
 
 #project source files
 SRCS := $(shell find $(LIB_DIRS) -maxdepth 2 \( -iname "*.c" ! -iname "*.pb.c" \))
+SRCS += $(shell find $(SRC_DIRS) \( -iname "*.c" ! -iname "*.pb.c" \))
 
 #some files in nrf libraries are mutually exclusive to filter out unneeded files libs
 SRCS := $(filter-out lib/nRF5_SDK_11.0.0_89a8197/components/drivers_nrf/hal/nrf_ecb.c,$(SRCS))
@@ -97,7 +100,6 @@ SRCS := $(filter-out lib/nRF5_SDK_11.0.0_89a8197/components/drivers_nrf/pstorage
 SRCS := $(filter-out lib/nRF5_SDK_11.0.0_89a8197/components/drivers_nrf/spi_master/spi_5W_master.c,$(SRCS))
 SRCS := $(filter-out lib/nRF5_SDK_11.0.0_89a8197/components/drivers_nrf/twi_master/deprecated/twi_sw_master.c,$(SRCS))
 SRCS := $(filter-out lib/nRF5_SDK_11.0.0_89a8197/components/drivers_nrf/twi_master/deprecated/twi_hw_master.c,$(SRCS))
-SRCS := $(filter-out lib/nRF5_SDK_11.0.0_89a8197/components/drivers_nrf/uart/nrf_drv_uart.c,$(SRCS))
 SRCS := $(filter-out lib/nRF5_SDK_11.0.0_89a8197/components/libraries/scheduler/app_scheduler_serconn.c,$(SRCS))
 SRCS := $(filter-out lib/nRF5_SDK_11.0.0_89a8197/components/libraries/timer/app_timer.c,$(SRCS))
 SRCS := $(filter-out lib/nRF5_SDK_11.0.0_89a8197/components/libraries/timer/app_timer_rtx.c,$(SRCS))
@@ -107,8 +109,8 @@ SRCS := $(filter-out lib/nRF5_SDK_11.0.0_89a8197/components/toolchain/system_nrf
 SRCS := $(filter-out lib/nRF5_SDK_11.0.0_89a8197/components/toolchain/system_nrf51422.c,$(SRCS))
 SRCS := $(filter-out $(wildcard lib/nRF5_SDK_11.0.0_89a8197/external/freertos/*),$(SRCS))
 
-OBJS = $(SRCS:%=$(BUILD_DIR)%.o) $(PB_OBJS)
-INC_DIRS := $(shell find $(LIB_DIRS) -maxdepth 2 -type d)
+C_OBJECTS = $(SRCS:%=$(BUILD_DIR)%.o) $(PB_OBJS)
+INC_DIRS := $(shell find $(LIB_DIRS) $(SRC_DIRS) -maxdepth 2 -type d)
 
 #cppcheck
 CPPCHECK = cppcheck
@@ -132,6 +134,17 @@ INC_FLAGS := $(addprefix -I,$(INC_DIRS)) -I./src
 CURRENT_DIR = $(notdir $(shell pwd))
 CP = cp
 CFLAGS = $(INC_FLAGS) $(FLAGS) $(DIRECTIVES) --std=gnu99
+LIBS = lib/libarm_cortexM4lf_math.a
+
+ASM_SOURCE_FILES  = $(abspath $(NRF5_SDK_DIR)/components/toolchain/gcc/gcc_startup_nrf52.s)
+ASM_SOURCE_FILE_NAMES = $(notdir $(ASM_SOURCE_FILES))
+ASM_PATHS = $(NRF5_SDK_DIR)/components/toolchain/gcc
+ASM_OBJECTS = $(addprefix $(BUILD_DIR), $(ASM_SOURCE_FILE_NAMES:.s=.o) )
+vpath %.s $(ASM_PATHS)
+OBJECTS = $(C_OBJECTS) $(ASM_OBJECTS)
+
+# $(info $$ASM_OBJECTS is [${ASM_OBJECTS}])
+# exit 1;
 
 #flags common to all targets
 CFLAGS += -DNRF52
@@ -149,7 +162,7 @@ CFLAGS += -Wall -Og -g3
 CFLAGS += -mfloat-abi=hard -mfpu=fpv4-sp-d16
 # keep every function in separate section. This will allow linker to dump unused functions
 CFLAGS += -ffunction-sections -fdata-sections -fno-strict-aliasing
-CFLAGS += -fno-builtin --short-enums 
+CFLAGS += -fno-builtin --short-enums
 CFLAGS += -L./pah8series
 CFLAGS += -DARM_MATH_CM4
 
@@ -190,9 +203,13 @@ AR = arm-none-eabi-ar
 .PHONY: pythondeps
 .PHONY: clean
 .PHONY: cppcheck
-.PHONY: swig
+.PHONY: flash
 
-all: $(PBMODELS) $(RUNNERS) $(OBJS) cppcheck $(BUILD_DIR)$(CURRENT_DIR).out
+all: $(PBMODELS) $(RUNNERS) $(OBJECTS) cppcheck
+
+flash: all $(RELEASE_DIR)$(OUTPUT_FILENAME).hex
+	nrfjprog --program $(RELEASE_DIR)$(OUTPUT_FILENAME).hex -f nrf52  --sectorerase
+	nrfjprog --reset -f nrf52
 
 test: all $(TEST_OBJS) $(TEST_RESULTS) $(CPPCHECK_RESULTS)
 	@echo ""
@@ -212,12 +229,16 @@ test: all $(TEST_OBJS) $(TEST_RESULTS) $(CPPCHECK_RESULTS)
 
 profile: all $(PROFILING_RESULTS)
 
-$(RELEASE_DIR)lib$(CURRENT_DIR).a: $(OBJS)
-	$(AR) $(ARFLAGS) $@ $(OBJS)
+$(RELEASE_DIR)$(OUTPUT_FILENAME).bin: $(BUILD_DIR)$(CURRENT_DIR).out
+	arm-none-eabi-objcopy -O binary $< $@
+
+$(RELEASE_DIR)$(OUTPUT_FILENAME).hex: $(BUILD_DIR)$(CURRENT_DIR).out
+	$(MKDIR) $(dir $@)
+	arm-none-eabi-objcopy -O ihex $< $@
 
 #link objects into an so to be included elsewhere
-$(BUILD_DIR)$(CURRENT_DIR).out: $(OBJS)
-	$(CC) $(LDFLAGS) $(OBJS) -lm -o $@
+$(BUILD_DIR)$(CURRENT_DIR).out: $(OBJECTS)
+	$(CC) $(LDFLAGS) $(OBJECTS) $(LIBS) -lm -o $@
 
 #generate profiling data
 $(PROFILING_RESULTS_DIR)%.out: $(BUILD_DIR)%.c.o.$(TARGET_EXTENSION)
@@ -231,12 +252,12 @@ $(TEST_RESULTS_DIR)%.txt: $(BUILD_DIR)%.c.o.$(TARGET_EXTENSION)
 
 #build the test runners
 $(BUILD_DIR)%.c.o.$(TARGET_EXTENSION): $(TEST_OUTPUT)%.c.o
-	$(CC) -g -o $@ $^ $(CFLAGS) $(OBJS) $(UNITY_ROOT)/src/unity.c $(TEST_RUNNERS)$(basename $(notdir $<))
+	$(CC) -g -o $@ $^ $(CFLAGS) $(OBJECTS) $(UNITY_ROOT)/src/unity.c $(TEST_RUNNERS)$(basename $(notdir $<))
 
 # assembly
-$(BUILD_DIR)%.s.o: %.s
+$(BUILD_DIR)%.o: %.s
 	$(MKDIR) $(dir $@)
-	$(AS) $(ASMFLAGS) -c $< -o $@
+	$(CC) $(ASMFLAGS) -c $< -o $@
 
 #execute cppcheck
 $(CPPCHECK_RESULTS_DIR)%.c.txt: %.c
@@ -250,34 +271,14 @@ $(BUILD_DIR)%.c.o: %.c
 
 # protocol buffer models
 src/protobuff/%.pb.c:: $(SRCPB) Pipfile.lock
-	pipenv run ./lib/nanopb/generator/protoc --plugin=protoc-gen-nanopb=./lib/nanopb/generator/protoc-gen-nanopb --nanopb_out=. $< 
-	find src/protobuff -name "*.pb.c" -exec sed -i "" 's|src/protobuff/||' {} \; 
-	
+	pipenv run ./lib/nanopb/generator/protoc --plugin=protoc-gen-nanopb=./lib/nanopb/generator/protoc-gen-nanopb --nanopb_out=. $<
+	find src/protobuff -name "*.pb.c" -exec sed -i 's|src/protobuff/||' {} \;
+
 
 #unity test runners
 $(TEST_RUNNERS)%.c:: $(TEST_DIRS)%.c
 	$(MKDIR) $(dir $@)
 	ruby $(UNITY_ROOT)/auto/generate_test_runner.rb $< $@
-
-#swig function library
-$(BUILD_DIR)%.c.o: %.c
-	$(MKDIR) $(dir $@)
-	$(CC) $(CFLAGS) -c $< -o $@
-
-#swig wrappers
-$(SWIG_DIR)%_wrap.c:: $(SWIG_DIR)%.i
-	$(SWIG) $(SWIG_FLAGS) $<
-
-
-swig: sharedobject $(SWIG_OBJS)
-	$(LD) -shared $(SWIG_OBJS) $(OBJS) -o $(RELEASE_DIR)$@_wrapper.so
-
-
-
-Pipfile.lock:
-	( \
-		pipenv install \
-	)
 
 clean:
 	$(CLEANUP) src/protobuff/*.pb.*

@@ -12,3 +12,9 @@ armgcc/_build
 Objects/
 RTE/
 Listings/
+
+src/protobuff/smaq2oss.pb.c
+
+src/protobuff/smaq2oss.pb.h
+
+Pipfile.lock

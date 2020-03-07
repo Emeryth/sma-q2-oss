@@ -106,9 +106,9 @@ void app_error_fault_handler(uint32_t id, uint32_t pc, uint32_t info){
 
 /**@brief   Function for handling app_uart events.
  *
- * @details This function will receive a single character from the app_uart module and append it to 
- *          a string. The string will be be sent over BLE when the last character received was a 
- *          'new line' i.e '\n' (hex 0x0D) or if the string has reached a length of 
+ * @details This function will receive a single character from the app_uart module and append it to
+ *          a string. The string will be be sent over BLE when the last character received was a
+ *          'new line' i.e '\n' (hex 0x0D) or if the string has reached a length of
  *          @ref NUS_MAX_DATA_LENGTH.
  */
 /**@snippet [Handling the data received over UART] */
@@ -132,7 +132,7 @@ void uart_event_handle(app_uart_evt_t * p_event)
 //                {
 //                    APP_ERROR_CHECK(err_code);
 //                }
-                
+
                 index = 0;
             }
             break;
@@ -383,12 +383,12 @@ int main(void)
     nrf_gfx_print(p_lcd, &text_start, PINK, "Pink", p_font, true);
     nrf_gfx_display(p_lcd);
 
-//    uart_init();
+    uart_init();
     battery_init();
     backlight_init();
     vibration_init();
 
-//    printf("\r\nUART Start!\r\n");
+
 //    ble_stack_init();
 //    gap_params_init();
 //    services_init();
@@ -413,6 +413,6 @@ int main(void)
 }
 
 
-/** 
+/**
  * @}
  */
