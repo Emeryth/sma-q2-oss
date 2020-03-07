@@ -40,6 +40,7 @@
 #include "nrf_rtc.h"
 #include "hrm.h"
 #include "screen_mgr.h"
+#include "UartLogger.h"
 
 #define UART_TX_BUF_SIZE                256                                         /**< UART TX buffer size. */
 #define UART_RX_BUF_SIZE                256                                         /**< UART RX buffer size. */
@@ -389,6 +390,9 @@ int main(void)
     vibration_init();
 
 
+	app_log_info("application started!");
+
+   // printf("\r\nUART Start!\r\n");
 //    ble_stack_init();
 //    gap_params_init();
 //    services_init();
