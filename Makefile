@@ -143,9 +143,6 @@ ASM_OBJECTS = $(addprefix $(BUILD_DIR), $(ASM_SOURCE_FILE_NAMES:.s=.o) )
 vpath %.s $(ASM_PATHS)
 OBJECTS = $(C_OBJECTS) $(ASM_OBJECTS)
 
-# $(info $$ASM_OBJECTS is [${ASM_OBJECTS}])
-# exit 1;
-
 #flags common to all targets
 CFLAGS += -DNRF52
 CFLAGS += -DSOFTDEVICE_PRESENT
@@ -208,7 +205,7 @@ AR = arm-none-eabi-ar
 all: $(PBMODELS) $(RUNNERS) $(OBJECTS) cppcheck
 
 flash: all $(RELEASE_DIR)$(OUTPUT_FILENAME).hex
-	nrfjprog --program $(RELEASE_DIR)$(OUTPUT_FILENAME).hex -f nrf52  --sectorerase
+	nrfjprog --clockspeed 10000 --program $(RELEASE_DIR)$(OUTPUT_FILENAME).hex -f nrf52  --sectorerase
 	nrfjprog --reset -f nrf52
 
 test: all $(TEST_OBJS) $(TEST_RESULTS) $(CPPCHECK_RESULTS)
