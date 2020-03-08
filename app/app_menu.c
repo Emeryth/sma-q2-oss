@@ -11,13 +11,14 @@
 static const nrf_gfx_font_desc_t * p_font = &m1c_18ptbFontInfo;
 static const nrf_lcd_t * p_lcd = &nrf_lcd_lpm013m126a;
 
-int8_t top_item_index=0;
-int8_t current_item_index=0;
+static int8_t top_item_index=0;
+static int8_t current_item_index=0;
 
 //static char menu_str[32];
 
 menu_item_t menu_items[NUM_MENU_ITEMS]={
 		{"Music",&icons[ICON_PLAY],APPLET_MUSIC},
+		{"Messages",&icons[ICON_MESSAGE],APPLET_NOTIFICATIONS},
 		{"HRM",&icons[ICON_HEART_BIG],APPLET_HRM},
 		{"Tetris",&icons[ICON_TETRIS],APPLET_TETRIS},
 		{"Battery",&icons[ICON_BATTERY_MENU],APPLET_BATTERY},

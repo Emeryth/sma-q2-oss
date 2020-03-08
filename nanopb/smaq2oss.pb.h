@@ -33,9 +33,9 @@ typedef struct _Forecast {
 typedef struct _MessageNotification {
     uint32_t timestamp;
     int32_t type;
-    pb_callback_t sender;
-    pb_callback_t subject;
-    pb_callback_t body;
+    char sender[32];
+    char subject[32];
+    char body[200];
 } MessageNotification;
 
 typedef struct _MusicControl {
@@ -70,7 +70,7 @@ typedef struct _SetWeather {
 #define CallControl_init_default                 {0}
 #define Forecast_init_default                    {0, 0, 0}
 #define SetWeather_init_default                  {0, 0, 0, 0, 0, 0, 0, {Forecast_init_default, Forecast_init_default, Forecast_init_default}}
-#define MessageNotification_init_default         {0, 0, {{NULL}, NULL}, {{NULL}, NULL}, {{NULL}, NULL}}
+#define MessageNotification_init_default         {0, 0, "", "", ""}
 #define CallNotification_init_default            {"", "", 0}
 #define MusicInfo_init_default                   {"", "", ""}
 #define SetTime_init_zero                        {0}
@@ -78,7 +78,7 @@ typedef struct _SetWeather {
 #define CallControl_init_zero                    {0}
 #define Forecast_init_zero                       {0, 0, 0}
 #define SetWeather_init_zero                     {0, 0, 0, 0, 0, 0, 0, {Forecast_init_zero, Forecast_init_zero, Forecast_init_zero}}
-#define MessageNotification_init_zero            {0, 0, {{NULL}, NULL}, {{NULL}, NULL}, {{NULL}, NULL}}
+#define MessageNotification_init_zero            {0, 0, "", "", ""}
 #define CallNotification_init_zero               {"", "", 0}
 #define MusicInfo_init_zero                      {"", "", ""}
 
@@ -146,10 +146,10 @@ X(a, STATIC,   REPEATED, MESSAGE,  forecasts,         7)
 #define MessageNotification_FIELDLIST(X, a) \
 X(a, STATIC,   SINGULAR, UINT32,   timestamp,         1) \
 X(a, STATIC,   SINGULAR, INT32,    type,              2) \
-X(a, CALLBACK, SINGULAR, STRING,   sender,            3) \
-X(a, CALLBACK, SINGULAR, STRING,   subject,           4) \
-X(a, CALLBACK, SINGULAR, STRING,   body,              5)
-#define MessageNotification_CALLBACK pb_default_field_callback
+X(a, STATIC,   SINGULAR, STRING,   sender,            3) \
+X(a, STATIC,   SINGULAR, STRING,   subject,           4) \
+X(a, STATIC,   SINGULAR, STRING,   body,              5)
+#define MessageNotification_CALLBACK NULL
 #define MessageNotification_DEFAULT NULL
 
 #define CallNotification_FIELDLIST(X, a) \
@@ -191,7 +191,7 @@ extern const pb_msgdesc_t MusicInfo_msg;
 #define CallControl_size                         11
 #define Forecast_size                            33
 #define SetWeather_size                          171
-/* MessageNotification_size depends on runtime parameters */
+#define MessageNotification_size                 285
 #define CallNotification_size                    61
 #define MusicInfo_size                           131
 

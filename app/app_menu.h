@@ -13,7 +13,7 @@
 #include "lcd.h"
 #include "nrf_gfx.h"
 
-#define NUM_MENU_ITEMS 4
+#define NUM_MENU_ITEMS 5
 #define MENU_ITEMS_PER_PAGE 4
 
 #define MENU_START_ROW 20

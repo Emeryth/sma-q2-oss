@@ -40,6 +40,7 @@
 #include "nrf_rtc.h"
 #include "hrm.h"
 #include "screen_mgr.h"
+#include "notification.h"
 
 #define UART_TX_BUF_SIZE                256                                         /**< UART TX buffer size. */
 #define UART_RX_BUF_SIZE                256                                         /**< UART RX buffer size. */
@@ -388,6 +389,8 @@ int main(void)
     backlight_init();
     vibration_init();
 
+    notification_init();
+
 //    printf("\r\nUART Start!\r\n");
 //    ble_stack_init();
 //    gap_params_init();
@@ -402,8 +405,8 @@ int main(void)
     xTaskCreate(button_task_handler, "buttons", configMINIMAL_STACK_SIZE+32, NULL, 1, &button_task);
     xTaskCreate(time_task_handler, "time", configMINIMAL_STACK_SIZE+32, NULL, 1, &time_task);
     xTaskCreate(vibration_task_handler, "vibration", configMINIMAL_STACK_SIZE+32, NULL, 1, &vibration_task);
-    xTaskCreate(hrm_task_handler, "hrm", configMINIMAL_STACK_SIZE+128, NULL, 1, &hrm_task);
-    xTaskCreate(ble_stack_thread, "ble", configMINIMAL_STACK_SIZE+512, NULL, 1, &m_ble_stack_thread);
+    xTaskCreate(hrm_task_handler, "hrm", configMINIMAL_STACK_SIZE+32, NULL, 1, &hrm_task);
+    xTaskCreate(ble_stack_thread, "ble", configMINIMAL_STACK_SIZE+64, NULL, 1, &m_ble_stack_thread);
 
     vTaskStartScheduler();
 

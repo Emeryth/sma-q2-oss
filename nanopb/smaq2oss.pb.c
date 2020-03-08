@@ -21,7 +21,7 @@ PB_BIND(Forecast, Forecast, AUTO)
 PB_BIND(SetWeather, SetWeather, AUTO)
 
 
-PB_BIND(MessageNotification, MessageNotification, AUTO)
+PB_BIND(MessageNotification, MessageNotification, 2)
 
 
 PB_BIND(CallNotification, CallNotification, AUTO)

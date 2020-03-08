@@ -76,7 +76,7 @@ $(abspath $(COMPONENTS)/toolchain/system_nrf52.c) \
 $(abspath $(COMPONENTS)/softdevice/common/softdevice_handler/softdevice_handler.c) \
 $(abspath ../freertos/croutine.c) \
 $(abspath ../freertos/event_groups.c) \
-$(abspath ../freertos/heap_2.c) \
+$(abspath ../freertos/heap_4.c) \
 $(abspath ../freertos/list.c) \
 $(abspath ../freertos/port.c) \
 $(abspath ../freertos/port_cmsis.c) \
@@ -125,11 +125,14 @@ $(abspath ../app/app_music.c) \
 $(abspath ../app/app_battery.c) \
 $(abspath ../app/app_call.c) \
 $(abspath ../app/app_weather.c) \
+$(abspath ../app/app_notification.c) \
+$(abspath ../app/app_notif_popup.c) \
 $(abspath ../app/watchface.c) \
 $(abspath ../app/status.c) \
 $(abspath ../app/screen_mgr.c) \
 $(abspath ../app/tetris.c) \
 $(abspath ../app/weather.c) \
+$(abspath ../app/notification.c) \
 $(abspath ../ble/ble.c) \
 $(abspath ../ble/ble_protocol.c) \
 $(abspath ../ble/ble_watch_service.c) \

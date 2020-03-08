@@ -10,6 +10,7 @@
 #include "lcd.h"
 #include "watchface.h"
 #include "app_call.h"
+#include "notification.h"
 
 static const nrf_lcd_t * p_lcd = &nrf_lcd_lpm013m126a;
 
@@ -34,6 +35,9 @@ void screen_manage(void){
 
 	if (call_get_status()==CALL_INCOMING && current_screen.id!= APPLET_CALL){
 		screen_switch(APPLET_CALL);
+	}
+	else if (notification_get_unread_count() && current_screen.id!= APPLET_NOTIF_POPUP && current_screen.id!= APPLET_CALL){
+		screen_switch(APPLET_NOTIF_POPUP);
 	}
 
 	periodic_refresh();

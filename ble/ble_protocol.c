@@ -67,6 +67,12 @@ static void on_call_notification(uint8_t * p_data, uint16_t length) {
 	}
 }
 
+static void on_msg_notification(uint8_t * p_data, uint16_t length) {
+
+	notification_store(p_data,length);
+
+}
+
 void ble_handle_message( uint8_t * p_data, uint16_t length){
 
 	uint8_t msg_type=p_data[0];
@@ -85,6 +91,9 @@ void ble_handle_message( uint8_t * p_data, uint16_t length){
 			break;
 		case MSG_CALL_NOTIFICATION:
 			on_call_notification(p_data,length);
+			break;
+		case MSG_NOTIFICATION:
+			on_msg_notification(p_data,length);
 			break;
 		default:
 			break;

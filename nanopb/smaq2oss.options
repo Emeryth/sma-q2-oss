@@ -6,3 +6,7 @@ MusicInfo.track 		max_size:64
 
 CallNotification.number		max_size:16
 CallNotification.name		max_size:32
+
+MessageNotification.sender	max_size:32
+MessageNotification.subject	max_size:32
+MessageNotification.body	max_size:200
