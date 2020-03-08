@@ -6,8 +6,10 @@
  */
 
 #include "app_notification.h"
+#include "app_time.h"
 #include "lcd.h"
 #include "screen_mgr.h"
+#include <time.h>
 
 #define NOTIFICATIONS_PER_PAGE 3
 
@@ -26,10 +28,13 @@ static int notifications_count=0;
 static int8_t top_item_index=0;
 static int8_t current_item_index=0;
 static 	int num_items;
+static char date_text[8];
+static struct tm date;
 
 static const nrf_lcd_t * p_lcd = &nrf_lcd_lpm013m126a;
 static const nrf_gfx_font_desc_t * sender_font = &m1c_16ptbFontInfo;
 static const nrf_gfx_font_desc_t * text_font = &m1c_12ptFontInfo;
+static const nrf_gfx_font_desc_t * date_font = &m1c_12ptbFontInfo;
 
 void notification_process(void){
 
@@ -46,8 +51,10 @@ static void notification_draw_list(void){
 
 		int item=top_item_index+i;
 		int selected = (item==current_item_index);
-		nrf_gfx_rect_t item_text = NRF_GFX_RECT(24,y,LCD_WIDTH,NOTIFICATION_ITEM_HEIGHT);
+		nrf_gfx_rect_t item_text = NRF_GFX_RECT(4,y+16,LCD_WIDTH,NOTIFICATION_ITEM_HEIGHT-16);
 		nrf_gfx_point_t item_icon = NRF_GFX_POINT(4,y+4);
+		nrf_gfx_point_t item_date = NRF_GFX_POINT(4+20,y);
+		nrf_gfx_rect_t item_sender = NRF_GFX_RECT(70,y,LCD_WIDTH,20);
 
 		nrf_gfx_rect_t item_box=NRF_GFX_RECT(0,y,LCD_WIDTH,NOTIFICATION_ITEM_HEIGHT);
 		nrf_gfx_rect_draw(p_lcd,&item_box,1,BLACK,selected);
@@ -58,6 +65,17 @@ static void notification_draw_list(void){
 		if (selected) text_color=WHITE;
 		else text_color=BLACK;
 
+		localtime_r((const time_t*)&notification_buf.timestamp,&date);
+
+		if (time_is_older_than_24h(notification_buf.timestamp)){
+			snprintf(date_text, sizeof(date_text), "%02d/%02d",date.tm_mday,date.tm_mon+1);
+		}
+		else{
+			snprintf(date_text, sizeof(date_text), "%02d:%02d",date.tm_hour,date.tm_min);
+		}
+
+		nrf_gfx_print(p_lcd, &item_date, text_color, date_text, date_font, true);
+		nrf_gfx_print_box_utf8(p_lcd, &item_sender, text_color, notification_buf.sender, date_font, true);
 		nrf_gfx_print_box_utf8(p_lcd, &item_text, text_color, notification_buf.body, text_font, true);
 //		nrf_gfx_print(p_lcd, &item_text, text_color, menu_items[item].name, p_font, true);
 		lcd_draw_icon(item_icon.x, item_icon.y, icons[ICON_MESSAGE]);

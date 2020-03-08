@@ -46,3 +46,13 @@ void set_date(time_t date){
 	current_time=date;
 
 }
+
+bool time_is_older_than_24h(time_t date){
+
+	if (current_time-SECS_PER_DAY>date){
+		return true;
+	}
+
+	return false;
+
+}
