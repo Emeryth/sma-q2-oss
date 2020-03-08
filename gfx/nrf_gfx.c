@@ -649,6 +649,11 @@ ret_code_t nrf_gfx_print_box_utf8(nrf_lcd_t const * p_instance,
         {
             x = p_box->x;
             y += p_font->height - p_font->height / 5;
+
+            if (y > (nrf_gfx_height_get(p_instance) - p_font->height)||y>(p_box->y+p_box->height-p_font->height))
+            {
+                break;
+            }
         }
         else
         {
