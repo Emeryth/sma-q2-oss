@@ -9,3 +9,5 @@
 *.zip
 components
 armgcc/_build
+gfx/screen.png
+
