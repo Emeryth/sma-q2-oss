@@ -8,17 +8,17 @@
 #ifndef APP_WATCHFACE_H_
 #define APP_WATCHFACE_H_
 
-#include "app_timer.h"
-#include "lcd.h"
-#include "nrf_gfx.h"
 #include "app_time.h"
+#include "app_timer.h"
 #include "buttons.h"
 #include "icon.h"
+#include "lcd.h"
+#include "nrf_gfx.h"
 
 void watchface_process(void);
 void watchface_draw(void);
 void draw_statusbar(uint8_t draw_time);
-void watchface_handler(void *p_context);
-void watchface_handle_button_evt(button_event_t *evt);
+void watchface_handler(void* p_context);
+void watchface_handle_button_evt(button_event_t* evt);
 
 #endif /* APP_WATCHFACE_H_ */

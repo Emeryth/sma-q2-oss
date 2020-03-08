@@ -1,3 +1,63 @@
+# SMAQ2 Open Source Firmware
+
+> Open source firmware for the SMAQ2 smartwatch
+
+
+The Fluke / Philips PM630X line of LCR meters were a line of benchtop equipment that allowed the testing of components with a frequency up to 1MHZ. Even though the meter was designed over 20 years ago it is still highly capable and has specs similar to modern commercial meters. The major advantage modern meters have are their updated rich UIs which are much more featureful and powerful than the LED display leveraged in this device. Fortunately PM630X meters include an optional RS232 port which allows fully remote control of the unit. This project leverages this serial port to build a modern high resolution TFT-based UI
+on this device that significantly expands the utility of the base unit.
+
+### Main Features ###
+- Redesigned modern UI for displaying measured component values <img src="https://raw.githubusercontent.com/dretay/pm6306_remote/master/IMG_4582.jpg" align="right" width="208">
+  - Shows currently measured voltage and current in addition to primary and secondary component readings
+  - Allows entering numeric values (frequency and voltages) through an on-screen keypad for quicker setup
+  - Allows selection of primary and secondary measurement parameters through on-screen dropdowns
+- Graphical ability to sweep frequency response for a component <img src="https://raw.githubusercontent.com/dretay/pm6306_remote/master/IMG_4608.jpg" align="right" width="208">
+- (Planned) graphical ability to bin components based on tolerances
+
+### Build Instructions ###
+#### Makefile Setup
+ 1.  initialize submodules
+    ```
+    $ git submodule init
+    $ git submodule update
+    ```
+ 2. install pipenv
+    ```
+    $ pip install pipenv
+    ```
+ 3. reconfigure bluez in experimental mode to enable all apis
+    ```
+    su vi /lib/systemd/system/bluetooth.service
+    ...
+    ExecStart=/usr/lib/bluetooth/bluetoothd --experimental
+    ```
+4. install dependencies needed for PyGObject
+   ```
+   sudo apt-get install -y libgirepository1.0-dev build-essential \
+   libbz2-dev libreadline-dev libssl-dev zlib1g-dev libsqlite3-dev wget \
+   curl llvm libncurses5-dev libncursesw5-dev xz-utils tk-dev libcairo2-dev
+   ```
+5. edit /etc/xdg/openbox/autostart
+	```
+	xset -dpms                      # turn off display power management system
+	xset s noblank          # turn off screen blanking
+	xset s off                      # turn off screen saver
+	unclutter -idle 0.5 -root&
+	/home/odroid/ElectronReact-0.18.1-arm64.AppImage --no-sandbox&
+	```
+6. ln -s /lib/aarch64-linux-gnu/libz.so.1.2.11 /lib/aarch64-linux-gnu/libz.so
+
+## References
+> Software tools, hardware, and useful articles
+
+### Software ###
+- [Electron](https://electronjs.org/)
+- [ReactJS](https://reactjs.org/)
+- [Bootstrap](https://getbootstrap.com/)
+
+### Hardware ###
+- [Odroid C2](https://wiki.odroid.com/odroid-c2/odroid-c2)
+- [Waveshare 4.3inch HDMI LCD](https://www.waveshare.com/4.3inch-hdmi-lcd-b.htm)
 # SMA-Q2-OSS
 
 Open source firmware for the SMA-Q2 smartwatch.
@@ -57,12 +117,12 @@ Enabling SWD requires some work:
 ## License and Copyright
 
 Copyright (c) 2019 Andrzej Surowiec,
-released under MIT License 
+released under MIT License
 
 FreeRTOS Copyright (C) Amazon.com, Inc.
 
 nRF GFX lib Copyright (c) Nordic Semiconductor ASA
 
-CMSIS DSP lib Copyright (C) ARM Limited. 
+CMSIS DSP lib Copyright (C) ARM Limited.
 
 See headers for licenses.

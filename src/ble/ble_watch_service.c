@@ -7,117 +7,109 @@
 
 #include "ble_watch_service.h"
 
+#include "ble_protocol.h"
 #include "ble_srv_common.h"
 #include "sdk_common.h"
-#include "ble_protocol.h"
 
-#define BLE_UUID_WATCHS_TX_CHARACTERISTIC 0x0002                      /**< The UUID of the TX Characteristic. */
-#define BLE_UUID_WATCHS_RX_CHARACTERISTIC 0x0003                      /**< The UUID of the RX Characteristic. */
+#define BLE_UUID_WATCHS_TX_CHARACTERISTIC 0x0002 /**< The UUID of the TX Characteristic. */
+#define BLE_UUID_WATCHS_RX_CHARACTERISTIC 0x0003 /**< The UUID of the RX Characteristic. */
 
-#define BLE_WATCHS_MAX_RX_CHAR_LEN        20        /**< Maximum length of the RX Characteristic (in bytes). */
-#define BLE_WATCHS_MAX_TX_CHAR_LEN        384        /**< Maximum length of the TX Characteristic (in bytes). */
+#define BLE_WATCHS_MAX_RX_CHAR_LEN 20 /**< Maximum length of the RX Characteristic (in bytes). */
+#define BLE_WATCHS_MAX_TX_CHAR_LEN 384 /**< Maximum length of the TX Characteristic (in bytes). */
 
 uint8_t write_buffer[BLE_WATCHS_MAX_TX_CHAR_LEN];
 ble_user_mem_block_t mem_block;
 
 //  51be0000-c182-4f3a-9359-21337bce51f6
-#define WATCHS_BASE_UUID                  {{0xF6, 0x51, 0xCE, 0x7B, 0x33, 0x21, 0x59, 0x93, 0x3A, 0x4F, 0x82, 0xC1, 0x00, 0x00, 0xBE, 0x51}}
+#define WATCHS_BASE_UUID                                                                                   \
+    {                                                                                                      \
+        {                                                                                                  \
+            0xF6, 0x51, 0xCE, 0x7B, 0x33, 0x21, 0x59, 0x93, 0x3A, 0x4F, 0x82, 0xC1, 0x00, 0x00, 0xBE, 0x51 \
+        }                                                                                                  \
+    }
 
-static void on_connect(ble_watchs_t * p_watchs, ble_evt_t * p_ble_evt)
+static void on_connect(ble_watchs_t* p_watchs, ble_evt_t* p_ble_evt)
 {
     p_watchs->conn_handle = p_ble_evt->evt.gap_evt.conn_handle;
 }
 
-
-static void on_disconnect(ble_watchs_t * p_watchs, ble_evt_t * p_ble_evt)
+static void on_disconnect(ble_watchs_t* p_watchs, ble_evt_t* p_ble_evt)
 {
     UNUSED_PARAMETER(p_ble_evt);
     p_watchs->conn_handle = BLE_CONN_HANDLE_INVALID;
 }
 
-static void handle_long_write(ble_watchs_t * p_watchs, ble_evt_t * p_ble_evt){
+static void handle_long_write(ble_watchs_t* p_watchs, ble_evt_t* p_ble_evt)
+{
 
-	uint8_t *read_pointer=mem_block.p_mem;
-	uint8_t *write_pointer=mem_block.p_mem;
+    uint8_t* read_pointer = mem_block.p_mem;
+    uint8_t* write_pointer = mem_block.p_mem;
 
-	uint16_t handle;
-	uint16_t offset;
-	uint16_t length;
-	uint16_t total_len=0;
+    uint16_t handle;
+    uint16_t offset;
+    uint16_t length;
+    uint16_t total_len = 0;
 
-	for(;;){
-		handle=*(uint16_t*)read_pointer;
-		if (handle!=p_watchs->tx_handles.value_handle){
-			break;
-		}
-		read_pointer+=2;
-		offset=*(uint16_t*)read_pointer;
-		read_pointer+=2;
-		length=*(uint16_t*)read_pointer;
-		read_pointer+=2;
+    for (;;) {
+        handle = *(uint16_t*)read_pointer;
+        if (handle != p_watchs->tx_handles.value_handle) {
+            break;
+        }
+        read_pointer += 2;
+        offset = *(uint16_t*)read_pointer;
+        read_pointer += 2;
+        length = *(uint16_t*)read_pointer;
+        read_pointer += 2;
 
+        memmove(write_pointer, read_pointer, length);
+        write_pointer += length;
+        read_pointer += length;
+        total_len += length;
+    }
 
-		memmove(write_pointer,read_pointer,length);
-		write_pointer+=length;
-		read_pointer+=length;
-		total_len+=length;
-
-	}
-
-	ble_handle_message(mem_block.p_mem,total_len);
+    ble_handle_message(mem_block.p_mem, total_len);
 }
 
-static void on_write(ble_watchs_t * p_watchs, ble_evt_t * p_ble_evt)
+static void on_write(ble_watchs_t* p_watchs, ble_evt_t* p_ble_evt)
 {
-    ble_gatts_evt_write_t * p_evt_write = &p_ble_evt->evt.gatts_evt.params.write;
+    ble_gatts_evt_write_t* p_evt_write = &p_ble_evt->evt.gatts_evt.params.write;
 
-	switch (p_evt_write->op) {
-	case BLE_GATTS_OP_WRITE_REQ:
-		break;
-	case BLE_GATTS_OP_EXEC_WRITE_REQ_NOW:
-		handle_long_write(p_watchs,p_ble_evt);
-		return;
-		break;
-	}
+    switch (p_evt_write->op) {
+    case BLE_GATTS_OP_WRITE_REQ:
+        break;
+    case BLE_GATTS_OP_EXEC_WRITE_REQ_NOW:
+        handle_long_write(p_watchs, p_ble_evt);
+        return;
+        break;
+    }
 
     if (
         (p_evt_write->handle == p_watchs->rx_handles.cccd_handle)
-        &&
-        (p_evt_write->len == 2)
-       )
-    {
-        if (ble_srv_is_notification_enabled(p_evt_write->data))
-        {
+        && (p_evt_write->len == 2)) {
+        if (ble_srv_is_notification_enabled(p_evt_write->data)) {
             p_watchs->is_notification_enabled = true;
-        }
-        else
-        {
+        } else {
             p_watchs->is_notification_enabled = false;
         }
-    }
-    else if (
-             (p_evt_write->handle == p_watchs->tx_handles.value_handle)
-//             &&
-//             (p_watchs->data_handler != NULL)
-            )
-    {
-//        p_watchs->data_handler(p_watchs, p_evt_write->data, p_evt_write->len);
-    	ble_handle_message(p_evt_write->data,p_evt_write->len);
-    }
-    else
-    {
+    } else if (
+        (p_evt_write->handle == p_watchs->tx_handles.value_handle)
+        //             &&
+        //             (p_watchs->data_handler != NULL)
+    ) {
+        //        p_watchs->data_handler(p_watchs, p_evt_write->data, p_evt_write->len);
+        ble_handle_message(p_evt_write->data, p_evt_write->len);
+    } else {
         // Do Nothing. This event is not relevant for this service.
     }
 }
 
-
-static uint32_t rx_char_add(ble_watchs_t * p_watchs)
+static uint32_t rx_char_add(ble_watchs_t* p_watchs)
 {
     /**@snippet [Adding proprietary characteristic to S110 SoftDevice] */
     ble_gatts_char_md_t char_md;
     ble_gatts_attr_md_t cccd_md;
-    ble_gatts_attr_t    attr_char_value;
-    ble_uuid_t          ble_uuid;
+    ble_gatts_attr_t attr_char_value;
+    ble_uuid_t ble_uuid;
     ble_gatts_attr_md_t attr_md;
 
     memset(&cccd_md, 0, sizeof(cccd_md));
@@ -130,11 +122,11 @@ static uint32_t rx_char_add(ble_watchs_t * p_watchs)
     memset(&char_md, 0, sizeof(char_md));
 
     char_md.char_props.notify = 1;
-    char_md.p_char_user_desc  = NULL;
-    char_md.p_char_pf         = NULL;
-    char_md.p_user_desc_md    = NULL;
-    char_md.p_cccd_md         = &cccd_md;
-    char_md.p_sccd_md         = NULL;
+    char_md.p_char_user_desc = NULL;
+    char_md.p_char_pf = NULL;
+    char_md.p_user_desc_md = NULL;
+    char_md.p_cccd_md = &cccd_md;
+    char_md.p_sccd_md = NULL;
 
     ble_uuid.type = p_watchs->uuid_type;
     ble_uuid.uuid = BLE_UUID_WATCHS_RX_CHARACTERISTIC;
@@ -144,42 +136,42 @@ static uint32_t rx_char_add(ble_watchs_t * p_watchs)
     BLE_GAP_CONN_SEC_MODE_SET_OPEN(&attr_md.read_perm);
     BLE_GAP_CONN_SEC_MODE_SET_OPEN(&attr_md.write_perm);
 
-    attr_md.vloc    = BLE_GATTS_VLOC_STACK;
+    attr_md.vloc = BLE_GATTS_VLOC_STACK;
     attr_md.rd_auth = 0;
     attr_md.wr_auth = 0;
-    attr_md.vlen    = 1;
+    attr_md.vlen = 1;
 
     memset(&attr_char_value, 0, sizeof(attr_char_value));
 
-    attr_char_value.p_uuid    = &ble_uuid;
+    attr_char_value.p_uuid = &ble_uuid;
     attr_char_value.p_attr_md = &attr_md;
-    attr_char_value.init_len  = sizeof(uint8_t);
+    attr_char_value.init_len = sizeof(uint8_t);
     attr_char_value.init_offs = 0;
-    attr_char_value.max_len   = BLE_WATCHS_MAX_RX_CHAR_LEN;
+    attr_char_value.max_len = BLE_WATCHS_MAX_RX_CHAR_LEN;
 
     return sd_ble_gatts_characteristic_add(p_watchs->service_handle,
-                                           &char_md,
-                                           &attr_char_value,
-                                           &p_watchs->rx_handles);
+        &char_md,
+        &attr_char_value,
+        &p_watchs->rx_handles);
     /**@snippet [Adding proprietary characteristic to S110 SoftDevice] */
 }
 
-static uint32_t tx_char_add(ble_watchs_t * p_watchs)
+static uint32_t tx_char_add(ble_watchs_t* p_watchs)
 {
     ble_gatts_char_md_t char_md;
-    ble_gatts_attr_t    attr_char_value;
-    ble_uuid_t          ble_uuid;
+    ble_gatts_attr_t attr_char_value;
+    ble_uuid_t ble_uuid;
     ble_gatts_attr_md_t attr_md;
 
     memset(&char_md, 0, sizeof(char_md));
 
-    char_md.char_props.write         = 1;
-//    char_md.char_props.write_wo_resp = 1;
-    char_md.p_char_user_desc         = NULL;
-    char_md.p_char_pf                = NULL;
-    char_md.p_user_desc_md           = NULL;
-    char_md.p_cccd_md                = NULL;
-    char_md.p_sccd_md                = NULL;
+    char_md.char_props.write = 1;
+    //    char_md.char_props.write_wo_resp = 1;
+    char_md.p_char_user_desc = NULL;
+    char_md.p_char_pf = NULL;
+    char_md.p_user_desc_md = NULL;
+    char_md.p_cccd_md = NULL;
+    char_md.p_sccd_md = NULL;
 
     char_md.char_ext_props.reliable_wr = 1;
 
@@ -191,70 +183,66 @@ static uint32_t tx_char_add(ble_watchs_t * p_watchs)
     BLE_GAP_CONN_SEC_MODE_SET_OPEN(&attr_md.read_perm);
     BLE_GAP_CONN_SEC_MODE_SET_OPEN(&attr_md.write_perm);
 
-    attr_md.vloc    = BLE_GATTS_VLOC_STACK;
+    attr_md.vloc = BLE_GATTS_VLOC_STACK;
     attr_md.rd_auth = 0;
     attr_md.wr_auth = 0;
-    attr_md.vlen    = 1;
+    attr_md.vlen = 1;
 
     memset(&attr_char_value, 0, sizeof(attr_char_value));
 
-    attr_char_value.p_uuid    = &ble_uuid;
+    attr_char_value.p_uuid = &ble_uuid;
     attr_char_value.p_attr_md = &attr_md;
-    attr_char_value.init_len  = 1;
+    attr_char_value.init_len = 1;
     attr_char_value.init_offs = 0;
-    attr_char_value.max_len   = BLE_WATCHS_MAX_TX_CHAR_LEN;
-//    attr_char_value.p_value = write_buffer;
+    attr_char_value.max_len = BLE_WATCHS_MAX_TX_CHAR_LEN;
+    //    attr_char_value.p_value = write_buffer;
 
     return sd_ble_gatts_characteristic_add(p_watchs->service_handle,
-                                           &char_md,
-                                           &attr_char_value,
-                                           &p_watchs->tx_handles);
+        &char_md,
+        &attr_char_value,
+        &p_watchs->tx_handles);
 }
 
-
-void ble_watchs_on_ble_evt(ble_watchs_t * p_watchs, ble_evt_t * p_ble_evt)
+void ble_watchs_on_ble_evt(ble_watchs_t* p_watchs, ble_evt_t* p_ble_evt)
 {
-    if ((p_watchs == NULL) || (p_ble_evt == NULL))
-    {
+    if ((p_watchs == NULL) || (p_ble_evt == NULL)) {
         return;
     }
 
-    switch (p_ble_evt->header.evt_id)
-    {
-        case BLE_GAP_EVT_CONNECTED:
-            on_connect(p_watchs, p_ble_evt);
-            break;
+    switch (p_ble_evt->header.evt_id) {
+    case BLE_GAP_EVT_CONNECTED:
+        on_connect(p_watchs, p_ble_evt);
+        break;
 
-        case BLE_GAP_EVT_DISCONNECTED:
-            on_disconnect(p_watchs, p_ble_evt);
-            break;
+    case BLE_GAP_EVT_DISCONNECTED:
+        on_disconnect(p_watchs, p_ble_evt);
+        break;
 
-        case BLE_GATTS_EVT_WRITE:
-            on_write(p_watchs, p_ble_evt);
-            break;
-        case BLE_EVT_USER_MEM_REQUEST:
-            mem_block.len = BLE_WATCHS_MAX_TX_CHAR_LEN;
-            mem_block.p_mem = &write_buffer[0];
-            sd_ble_user_mem_reply(p_watchs->conn_handle, &mem_block);
-            break;
+    case BLE_GATTS_EVT_WRITE:
+        on_write(p_watchs, p_ble_evt);
+        break;
+    case BLE_EVT_USER_MEM_REQUEST:
+        mem_block.len = BLE_WATCHS_MAX_TX_CHAR_LEN;
+        mem_block.p_mem = &write_buffer[0];
+        sd_ble_user_mem_reply(p_watchs->conn_handle, &mem_block);
+        break;
 
-        default:
-            // No implementation needed.
-            break;
+    default:
+        // No implementation needed.
+        break;
     }
 }
 
-
-uint32_t ble_watchs_init(ble_watchs_t * p_watchs)
+uint32_t ble_watchs_init(ble_watchs_t* p_watchs)
 {
-    uint32_t      err_code;
-    ble_uuid_t    ble_uuid;
+    uint32_t err_code;
+    ble_uuid_t ble_uuid;
     ble_uuid128_t nus_base_uuid = WATCHS_BASE_UUID;
 
     VERIFY_PARAM_NOT_NULL(p_watchs);
 
     // Initialize the service structure.
-    p_watchs->conn_handle             = BLE_CONN_HANDLE_INVALID;
+    p_watchs->conn_handle = BLE_CONN_HANDLE_INVALID;
     p_watchs->is_notification_enabled = false;
 
     /**@snippet [Adding proprietary Service to S110 SoftDevice] */
@@ -267,8 +255,8 @@ uint32_t ble_watchs_init(ble_watchs_t * p_watchs)
 
     // Add the service.
     err_code = sd_ble_gatts_service_add(BLE_GATTS_SRVC_TYPE_PRIMARY,
-                                        &ble_uuid,
-                                        &p_watchs->service_handle);
+        &ble_uuid,
+        &p_watchs->service_handle);
     /**@snippet [Adding proprietary Service to S110 SoftDevice] */
     VERIFY_SUCCESS(err_code);
 
@@ -283,20 +271,17 @@ uint32_t ble_watchs_init(ble_watchs_t * p_watchs)
     return NRF_SUCCESS;
 }
 
-
-uint32_t ble_watchs_send(ble_watchs_t * p_watchs, uint8_t * p_data, uint16_t length)
+uint32_t ble_watchs_send(ble_watchs_t* p_watchs, uint8_t* p_data, uint16_t length)
 {
     ble_gatts_hvx_params_t hvx_params;
 
     VERIFY_PARAM_NOT_NULL(p_watchs);
 
-    if ((p_watchs->conn_handle == BLE_CONN_HANDLE_INVALID) || (!p_watchs->is_notification_enabled))
-    {
+    if ((p_watchs->conn_handle == BLE_CONN_HANDLE_INVALID) || (!p_watchs->is_notification_enabled)) {
         return NRF_ERROR_INVALID_STATE;
     }
 
-    if (length > BLE_WATCHS_MAX_RX_CHAR_LEN)
-    {
+    if (length > BLE_WATCHS_MAX_RX_CHAR_LEN) {
         return NRF_ERROR_INVALID_PARAM;
     }
 
@@ -304,11 +289,8 @@ uint32_t ble_watchs_send(ble_watchs_t * p_watchs, uint8_t * p_data, uint16_t len
 
     hvx_params.handle = p_watchs->rx_handles.value_handle;
     hvx_params.p_data = p_data;
-    hvx_params.p_len  = &length;
-    hvx_params.type   = BLE_GATT_HVX_NOTIFICATION;
+    hvx_params.p_len = &length;
+    hvx_params.type = BLE_GATT_HVX_NOTIFICATION;
 
     return sd_ble_gatts_hvx(p_watchs->conn_handle, &hvx_params);
 }
-
-
-

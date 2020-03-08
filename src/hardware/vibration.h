@@ -12,20 +12,20 @@
 
 #define VIBRATION_PATTERN_LEN 8
 
-typedef struct{
+typedef struct {
 
-	uint8_t pattern[VIBRATION_PATTERN_LEN];
-	int repeat;
+    uint8_t pattern[VIBRATION_PATTERN_LEN];
+    int repeat;
 
-}vibration_pattern_t;
+} vibration_pattern_t;
 
-typedef struct{
+typedef struct {
 
-	vibration_pattern_t pattern;
-	int step;
-	int repeat;
+    vibration_pattern_t pattern;
+    int step;
+    int repeat;
 
-}vibration_state_t;
+} vibration_state_t;
 
 void vibration_init(void);
 void vibration_step(void);

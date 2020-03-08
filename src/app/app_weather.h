@@ -12,7 +12,6 @@
 #include "screen_mgr.h"
 
 void weather_draw(void);
-void weather_handle_button_evt(button_event_t *evt);
-
+void weather_handle_button_evt(button_event_t* evt);
 
 #endif /* APP_APP_WEATHER_H_ */

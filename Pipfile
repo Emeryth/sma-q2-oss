@@ -4,3 +4,6 @@ python_version = "3.7"
 [packages]
 jupyter = "*"
 protobuf-compiler = "*"
+Adafruit-BluefruitLE = "*"
+dbus-python = "*"
+pygobject = "*"

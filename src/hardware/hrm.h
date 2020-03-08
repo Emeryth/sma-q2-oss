@@ -8,10 +8,10 @@
 #ifndef HARDWARE_HRM_H_
 #define HARDWARE_HRM_H_
 
-enum hrm_commands{
-	HRM_NOP,
-	HRM_START,
-	HRM_STOP,
+enum hrm_commands {
+    HRM_NOP,
+    HRM_START,
+    HRM_STOP,
 };
 
 void hrm_init(void);

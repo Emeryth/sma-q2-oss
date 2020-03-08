@@ -405,7 +405,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #define KX012_WHO_AM_I_WIA_ID (0x1A << 0)
 // WHO_AM_I -value for KX023
 #define KX023_WHO_AM_I_WIA_ID (0x15 << 0)
- /*registers bit masks */
+/*registers bit masks */
 #define KX022_COTR_DCSTR_MASK 0xFF
 
 #define KX022_WHO_AM_I_WIA_MASK 0xFF
@@ -445,4 +445,3 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #define KX023_WHO_AM_I_WIA_MASK 0xFF
 #endif
-

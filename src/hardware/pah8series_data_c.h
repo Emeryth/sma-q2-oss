@@ -4,14 +4,14 @@
 #include <stdint.h>
 
 typedef struct {
-    uint8_t                     frame_count;
-    uint32_t                    time;
-    uint8_t                     touch_flag;
-    uint32_t                    nf_ppg_channel;
-    uint32_t                    nf_ppg_per_channel;
-    int32_t                     *ppg_data;
-    uint32_t                    nf_mems;
-    int16_t                     *mems_data;
+    uint8_t frame_count;
+    uint32_t time;
+    uint8_t touch_flag;
+    uint32_t nf_ppg_channel;
+    uint32_t nf_ppg_per_channel;
+    int32_t* ppg_data;
+    uint32_t nf_mems;
+    int16_t* mems_data;
 } pah8series_data_t;
 
 typedef enum {
@@ -82,7 +82,7 @@ typedef enum {
     //v532
     PAH8SERIES_PARAM_IDX_SET_FLAG_LIMIT_HR_LB,
     PAH8SERIES_PARAM_IDX_SET_LIMIT_HR_LB,
-		
+
     PAH8SERIES_NF_PARAM_IDX,
 } pah8series_param_idx_t;
 
@@ -95,8 +95,8 @@ typedef enum {
     MSG_PPG_LEN_TOO_SHORT,
     MSG_FRAME_LOSS,
     MSG_INVALID_ARGUMENT,
-	MSG_PROCESS_NOT_FINISHED,
-	MSG_ADDR_NOT_4BYTE_ALIGNED,
+    MSG_PROCESS_NOT_FINISHED,
+    MSG_ADDR_NOT_4BYTE_ALIGNED,
 
     MSG_NO_MEM = 14,
     MSG_ECG_LEN_TOO_SHORT = 15,
@@ -105,6 +105,4 @@ typedef enum {
     MSG_SIGNAL_POOR = 0x40
 } pah8series_msg_code_t;
 
-
 #endif // PAH8002_DATA_H__
-

@@ -271,6 +271,15 @@ src/protobuff/%.pb.c:: $(SRCPB) Pipfile.lock
 	pipenv run ./lib/nanopb/generator/protoc --plugin=protoc-gen-nanopb=./lib/nanopb/generator/protoc-gen-nanopb --nanopb_out=. $<
 	find src/protobuff -name "*.pb.c" -exec sed -i 's|src/protobuff/||' {} \;
 
+jupyter: Pipfile.lock
+	( \
+		pipenv run jupyter notebook --allow-root --no-mathjax --ip=0.0.0.0 --port=8888 --no-browser \
+	)
+
+Pipfile.lock: Pipfile
+	( \
+		pipenv install \
+	)
 
 #unity test runners
 $(TEST_RUNNERS)%.c:: $(TEST_DIRS)%.c
