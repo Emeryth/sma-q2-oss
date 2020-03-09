@@ -23,7 +23,7 @@ void weather_set(SetWeather *weather){
 	weather_current.humidity=weather->humidity;
 
 	_time=weather_current.timestamp;
-	localtime_r(&_time,&weather_current.date);
+	gmtime_r(&_time,&weather_current.date);
 
 	for (int i=0;i<WEATHER_FORECAST_COUNT;i++){
 		weather_current.forecasts[i].condition=weather->forecasts[i].condition;
@@ -31,7 +31,7 @@ void weather_set(SetWeather *weather){
 		weather_current.forecasts[i].temperature_max=weather->forecasts[i].temperature_max;
 
 		_time+=24*60*60;
-		localtime_r(&_time,&weather_current.forecasts[i].date);
+		gmtime_r(&_time,&weather_current.forecasts[i].date);
 	}
 	screen_redraw_request();
 }

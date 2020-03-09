@@ -36,7 +36,7 @@ void time_handler(TickType_t ticks){
 
 	}
 
-	localtime_r(&current_time,&time_date);
+	gmtime_r(&current_time,&time_date);
 
 
 }

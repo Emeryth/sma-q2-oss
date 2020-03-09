@@ -65,7 +65,7 @@ static void notification_draw_list(void){
 		if (selected) text_color=WHITE;
 		else text_color=BLACK;
 
-		localtime_r((const time_t*)&notification_buf.timestamp,&date);
+		gmtime_r((const time_t*)&notification_buf.timestamp,&date);
 
 		if (time_is_older_than_24h(notification_buf.timestamp)){
 			snprintf(date_text, sizeof(date_text), "%02d/%02d",date.tm_mday,date.tm_mon+1);
