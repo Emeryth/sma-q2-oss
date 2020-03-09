@@ -38,7 +38,7 @@ void battery_draw(void){
     // Draw grid
 
     nrf_gfx_point_t graph_bot_left= NRF_GFX_POINT(10, 150);
-    nrf_gfx_point_t graph_top_right= NRF_GFX_POINT(10+BATTERY_HISTORY_LENGTH+16, 150-100);
+    nrf_gfx_point_t graph_top_right= NRF_GFX_POINT(10+BATTERY_HISTORY_LENGTH, 150-100);
 
     nrf_gfx_line_t grid_v_line=NRF_GFX_LINE(graph_bot_left.x,graph_top_right.y,graph_bot_left.x,graph_bot_left.y,1);
     for (int i=0;i<BATTERY_HISTORY_LENGTH+GRID_H_STEP;i+=GRID_H_STEP){
