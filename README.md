@@ -11,29 +11,31 @@ TBD
 
 ### Build Instructions ###
 #### Makefile Setup
- 1.  initialize submodules
-    ```
-    $ git submodule init
-    $ git submodule update
-    ```
- 2. install pipenv
-    ```
-    $ pip install pipenv
-    ```
- 3. reconfigure bluez in experimental mode to enable all apis
-    ```
-    $ su vi /lib/systemd/system/bluetooth.service
-    ...
-    ExecStart=/usr/lib/bluetooth/bluetoothd --experimental
-    ```
+1.  initialize submodules
+  ```
+  $ git submodule init
+  $ git submodule update
+  ```
+2. install linux packages needed
+  ```
+  $ apt-get install build-essential pipenv python3-dbus git virtualenv build-essential python3-dev libdbus-glib-1-dev libgirepository1.0-dev libcairo2-dev python3-protobuf protobuf-compiler python-protobuf gcc-arm-none-eabi binutils-arm-none-eabi gdb-arm-none-eabi openocd
+  pip3 install dbus-python
+  ```
+3. reconfigure bluez in experimental mode to enable all apis
+  ```
+  $ sudo vi /lib/systemd/system/bluetooth.service
+  ...
+  ExecStart=/usr/lib/bluetooth/bluetoothd --experimental
+  ```
 4. install JLink
-   ```
-   $ wget --post-data 'accept_license_agreement=accepted&non_emb_ctr=confirmed&submit=Download+software' https://www.segger.com/downloads/jlink/JLink_Linux_arm.tgz
-   $ cd JLink_Linux_V646g_arm/
-   $ more README.txt
-   $ sudo cp 99-jlink.rules /etc/udev/rules.d/
-   $ sudo reboot
-   ```
+  ```
+  $ wget --post-data 'accept_license_agreement=accepted&non_emb_ctr=confirmed&submit=Download+software' https://www.segger.com/downloads/jlink/JLink_Linux_arm.tgz
+  $ cd JLink_Linux_V646g_arm/
+  $ more README.txt
+  $ sudo cp 99-jlink.rules /etc/udev/rules.d/
+  $ ln -s JLink_Linux_V646g_arm/JLinkExe ~/.local/bin
+  $ sudo reboot
+  ```
 
 ## References
 > Software tools, hardware, and useful articles
