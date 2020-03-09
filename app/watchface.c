@@ -107,6 +107,7 @@ void draw_statusbar(uint8_t draw_time) {
 	if (status_get_ble_connected()) {
 		lcd_draw_icon(LCD_WIDTH - 56, 0, icons[ICON_BLUETOOTH]);
 	}
+
 }
 
 void watchface_handler(void *p_context) {

@@ -48,8 +48,12 @@ $(abspath $(COMPONENTS)/libraries/util/app_error.c) \
 $(abspath $(COMPONENTS)/libraries/fifo/app_fifo.c) \
 $(abspath $(COMPONENTS)/libraries/util/app_util_platform.c) \
 $(abspath $(COMPONENTS)/libraries/timer/app_timer_freertos.c) \
+$(abspath $(COMPONENTS)/libraries/crc16/crc16.c) \
+$(abspath $(COMPONENTS)/libraries/ecc/ecc.c) \
+$(abspath $(COMPONENTS)/libraries/fds/fds.c) \
 $(abspath $(COMPONENTS)/libraries/fstorage/fstorage.c) \
 $(abspath $(COMPONENTS)/libraries/util/nrf_assert.c) \
+$(abspath $(COMPONENTS)/libraries/util/sdk_mapped_flags.c) \
 $(abspath $(COMPONENTS)/libraries/uart/retarget.c) \
 $(abspath $(COMPONENTS)/libraries/uart/app_uart_fifo.c) \
 $(abspath $(COMPONENTS)/libraries/pwm/app_pwm.c) \
@@ -59,6 +63,7 @@ $(abspath $(COMPONENTS)/drivers_nrf/delay/nrf_delay.c) \
 $(abspath $(COMPONENTS)/drivers_nrf/common/nrf_drv_common.c) \
 $(abspath $(COMPONENTS)/drivers_nrf/gpiote/nrf_drv_gpiote.c) \
 $(abspath $(COMPONENTS)/drivers_nrf/ppi/nrf_drv_ppi.c) \
+$(abspath $(COMPONENTS)/drivers_nrf/rng/nrf_drv_rng.c) \
 $(abspath $(COMPONENTS)/drivers_nrf/spi_master/nrf_drv_spi.c) \
 $(abspath $(COMPONENTS)/drivers_nrf/timer/nrf_drv_timer.c) \
 $(abspath $(COMPONENTS)/drivers_nrf/twi_master/nrf_drv_twi.c) \
@@ -70,8 +75,22 @@ $(abspath ../main.c) \
 $(abspath $(COMPONENTS)/ble/common/ble_advdata.c) \
 $(abspath $(COMPONENTS)/ble/ble_advertising/ble_advertising.c) \
 $(abspath $(COMPONENTS)/ble/common/ble_conn_params.c) \
+$(abspath $(COMPONENTS)/ble/common/ble_conn_state.c) \
 $(abspath $(COMPONENTS)/ble/ble_services/ble_nus/ble_nus.c) \
 $(abspath $(COMPONENTS)/ble/common/ble_srv_common.c) \
+$(abspath $(COMPONENTS)/ble/peer_manager/gatt_cache_manager.c) \
+$(abspath $(COMPONENTS)/ble/peer_manager/gattc_cache_manager.c) \
+$(abspath $(COMPONENTS)/ble/peer_manager/gatts_cache_manager.c) \
+$(abspath $(COMPONENTS)/ble/peer_manager/id_manager.c) \
+$(abspath $(COMPONENTS)/ble/peer_manager/peer_data.c) \
+$(abspath $(COMPONENTS)/ble/peer_manager/peer_data_storage.c) \
+$(abspath $(COMPONENTS)/ble/peer_manager/peer_database.c) \
+$(abspath $(COMPONENTS)/ble/peer_manager/peer_id.c) \
+$(abspath $(COMPONENTS)/ble/peer_manager/peer_manager.c) \
+$(abspath $(COMPONENTS)/ble/peer_manager/pm_buffer.c) \
+$(abspath $(COMPONENTS)/ble/peer_manager/pm_mutex.c) \
+$(abspath $(COMPONENTS)/ble/peer_manager/security_dispatcher.c) \
+$(abspath $(COMPONENTS)/ble/peer_manager/security_manager.c) \
 $(abspath $(COMPONENTS)/toolchain/system_nrf52.c) \
 $(abspath $(COMPONENTS)/softdevice/common/softdevice_handler/softdevice_handler.c) \
 $(abspath ../freertos/croutine.c) \
@@ -127,6 +146,7 @@ $(abspath ../app/app_call.c) \
 $(abspath ../app/app_weather.c) \
 $(abspath ../app/app_notification.c) \
 $(abspath ../app/app_notif_popup.c) \
+$(abspath ../app/app_pairing.c) \
 $(abspath ../app/watchface.c) \
 $(abspath ../app/status.c) \
 $(abspath ../app/screen_mgr.c) \
@@ -157,7 +177,12 @@ INC_PATHS += -I$(abspath ../nanopb)
 INC_PATHS += -I$(abspath $(COMPONENTS)/drivers_nrf/config)
 #INC_PATHS += -I$(abspath $(NRF5_SDK_PATH)/examples/bsp)
 INC_PATHS += -I$(abspath $(COMPONENTS)/libraries/timer)
+INC_PATHS += -I$(abspath $(COMPONENTS)/libraries/trace)
+INC_PATHS += -I$(abspath $(COMPONENTS)/libraries/ecc)
 INC_PATHS += -I$(abspath $(COMPONENTS)/libraries/fifo)
+INC_PATHS += -I$(abspath $(COMPONENTS)/libraries/fds)
+INC_PATHS += -I$(abspath $(COMPONENTS)/libraries/fds/config)
+INC_PATHS += -I$(abspath $(COMPONENTS)/libraries/fstorage)
 INC_PATHS += -I$(abspath $(COMPONENTS)/libraries/fstorage/config)
 INC_PATHS += -I$(abspath $(COMPONENTS)/drivers_nrf/delay)
 INC_PATHS += -I$(abspath $(COMPONENTS)/softdevice/s132/headers/nrf52)
@@ -169,7 +194,6 @@ INC_PATHS += -I$(abspath $(COMPONENTS)/libraries/uart)
 INC_PATHS += -I$(abspath $(COMPONENTS)/device)
 INC_PATHS += -I$(abspath $(COMPONENTS)/libraries/button)
 INC_PATHS += -I$(abspath $(COMPONENTS)/libraries/pwm)
-INC_PATHS += -I$(abspath $(COMPONENTS)/libraries/fstorage)
 INC_PATHS += -I$(abspath $(COMPONENTS)/libraries/experimental_section_vars)
 INC_PATHS += -I$(abspath $(COMPONENTS)/softdevice/s132/headers)
 INC_PATHS += -I$(abspath $(COMPONENTS)/drivers_nrf/gpiote)
@@ -187,7 +211,9 @@ INC_PATHS += -I$(abspath $(COMPONENTS)/drivers_nrf/ppi)
 INC_PATHS += -I$(abspath $(COMPONENTS)/drivers_nrf/timer)
 INC_PATHS += -I$(abspath $(COMPONENTS)/drivers_nrf/twi_master)
 INC_PATHS += -I$(abspath $(COMPONENTS)/drivers_nrf/hal)
+INC_PATHS += -I$(abspath $(COMPONENTS)/drivers_nrf/rng)
 INC_PATHS += -I$(abspath $(COMPONENTS)/ble/ble_advertising)
+INC_PATHS += -I$(abspath $(COMPONENTS)/ble/peer_manager)
 INC_PATHS += -I$(abspath $(COMPONENTS)/softdevice/common/softdevice_handler)
 
 OBJECT_DIRECTORY = _build
@@ -269,7 +295,8 @@ ASMFLAGS += -D__HEAP_SIZE=512
 ASMFLAGS += -DARM_MATH_CM4
 
 #LIBS = $(abspath ./pah8series.ar) 
-LIBS = $(abspath ../lib/libarm_cortexM4lf_math.a)
+LIBS += $(abspath ../lib/libarm_cortexM4lf_math.a)
+LIBS += $(abspath ../lib/micro_ecc_lib_nrf52.a)
 
 #default target - first one defined
 #default: clean application zip

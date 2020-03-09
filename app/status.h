@@ -9,9 +9,12 @@
 #define APP_STATUS_H_
 
 #include <stdint.h>
+#include <stdbool.h>
 
-uint8_t status_get_ble_connected(void);
-void status_set_ble_connected(uint8_t status);
+bool status_get_ble_connected(void);
+void status_set_ble_connected(bool status);
+bool status_get_pairing_request(void);
+void status_set_pairing_request(bool status);
 
 
 

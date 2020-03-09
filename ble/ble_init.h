@@ -33,5 +33,9 @@ void ble_evt_dispatch(ble_evt_t * p_ble_evt);
 void ble_stack_init(void);
 void advertising_init(void);
 void ble_stack_thread(void * arg);
+void peer_manager_init(bool erase_bonds);
+
+void ble_accept_passkey(void);
+void ble_reject_passkey(void);
 
 #endif /* BLE_BLE_INIT_H_ */

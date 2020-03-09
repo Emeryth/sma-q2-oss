@@ -24,7 +24,13 @@
 #include "status.h"
 #include "ble_protocol.h"
 #include "ble_watch_service.h"
+#include "peer_manager.h"
+#include "fds.h"
+#include "fstorage.h"
+#include "ecc.h"
+#include "ble_conn_state.h"
 
+#define APP_FEATURE_NOT_SUPPORTED   BLE_GATT_STATUS_ATTERR_APP_BEGIN + 2
 
 #define IS_SRVC_CHANGED_CHARACT_PRESENT 0                                           /**< Include the service_changed characteristic. If not enabled, the server's database cannot be changed for the lifetime of the device. */
 
@@ -47,7 +53,20 @@
 
 #define DEAD_BEEF                       0xDEADBEEF                                  /**< Value used as error code on stack dump, can be used to identify stack location on stack unwind. */
 
+#define BLE_GAP_LESC_P256_SK_LEN 32
+/**@brief GAP LE Secure Connections P-256 Private Key. */
+typedef struct
+{
+  uint8_t   sk[BLE_GAP_LESC_P256_SK_LEN];        /**< LE Secure Connections Elliptic Curve Diffie-Hellman P-256 Private Key in little-endian. */
+} ble_gap_lesc_p256_sk_t;
 
+static __ALIGN(4) ble_gap_lesc_p256_sk_t m_lesc_sk;    /**< LESC ECC Private Key */
+static __ALIGN(4) ble_gap_lesc_p256_pk_t m_lesc_pk;    /**< LESC ECC Public Key */
+static __ALIGN(4) ble_gap_lesc_dhkey_t m_lesc_dhkey;   /**< LESC ECC DH Key*/
+
+static uint8_t m_dhkey_req = 0;             /**< LESC DHKEY requested */
+
+uint8_t passkey[BLE_GAP_PASSKEY_LEN + 1];
 
 //static ble_nus_t                        m_nus;                                      /**< Structure to identify the Nordic UART Service. */
 static ble_watchs_t                     m_watchs;
@@ -180,6 +199,128 @@ void conn_params_init(void)
     APP_ERROR_CHECK(err_code);
 }
 
+/**@brief Function for handling File Data Storage events.
+ *
+ * @param[in] p_evt  Peer Manager event.
+ * @param[in] cmd
+ */
+static void fds_evt_handler(fds_evt_t const * const p_fds_evt)
+{
+    if (p_fds_evt->id == FDS_EVT_GC)
+    {
+        NRF_LOG_PRINTF("GC completed\n");
+    }
+}
+
+/**@brief Function for handling Peer Manager events.
+ *
+ * @param[in] p_evt  Peer Manager event.
+ */
+static void pm_evt_handler(pm_evt_t const * p_evt)
+{
+    ret_code_t err_code;
+
+    switch(p_evt->evt_id)
+    {
+        case PM_EVT_BONDED_PEER_CONNECTED:
+            NRF_LOG_PRINTF("PM_EVT_BONDED_PEER_CONNECTED: peer_id=%d\n", p_evt->peer_id);
+            err_code = pm_peer_rank_highest(p_evt->peer_id);
+            NRF_LOG_PRINTF("peer_rank err_code: %d\r\n", err_code);
+            break;
+
+        case PM_EVT_CONN_SEC_START:
+            NRF_LOG_PRINTF("PM_EVT_CONN_SEC_START: peer_id=%d\n", p_evt->peer_id);
+            break;
+
+        case PM_EVT_CONN_SEC_SUCCEEDED:
+            NRF_LOG_PRINTF("PM_EVT_CONN_SEC_SUCCEEDED Role: %d. conn_handle: %d, Procedure: %d\r\n",
+                           ble_conn_state_role(p_evt->conn_handle),
+                           p_evt->conn_handle,
+                           p_evt->params.conn_sec_succeeded.procedure);
+            err_code = pm_peer_rank_highest(p_evt->peer_id);
+            NRF_LOG_PRINTF("peer_rank err_code: %d\r\n", err_code);
+            break;
+
+        case PM_EVT_CONN_SEC_FAILED:
+            NRF_LOG_PRINTF("PM_EVT_CONN_SEC_FAILED: peer_id=%d, error=%d\n", p_evt->peer_id, p_evt->params.conn_sec_failed.error);
+            switch (p_evt->params.conn_sec_failed.error)
+            {
+                case PM_CONN_SEC_ERROR_PIN_OR_KEY_MISSING:
+                    // Rebond if one party has lost its keys.
+                    err_code = pm_conn_secure(p_evt->conn_handle, true);
+                    if (err_code != NRF_ERROR_INVALID_STATE)
+                    {
+                        APP_ERROR_CHECK(err_code);
+                    }
+                    break;
+
+                default:
+                    break;
+            }
+            break;
+
+        case PM_EVT_CONN_SEC_CONFIG_REQ:
+        {
+            // Reject pairing request from an already bonded peer.
+            pm_conn_sec_config_t conn_sec_config = {.allow_repairing = false};
+            pm_conn_sec_config_reply(p_evt->conn_handle, &conn_sec_config);
+        }
+
+        case PM_EVT_STORAGE_FULL:
+            // Run garbage collection on the flash.
+            err_code = fds_gc();
+            if (err_code == FDS_ERR_BUSY || err_code == FDS_ERR_NO_SPACE_IN_QUEUES)
+            {
+                // Retry.
+            }
+            break;
+
+        case PM_EVT_ERROR_UNEXPECTED:
+            // Assert.
+            APP_ERROR_CHECK(p_evt->params.error_unexpected.error);
+            break;
+
+        case PM_EVT_PEER_DATA_UPDATE_SUCCEEDED:
+            NRF_LOG_PRINTF("PM_EVT_PEER_DATA_UPDATE_SUCCEEDED: peer_id=%d data_id=0x%x action=0x%x\n", p_evt->peer_id, p_evt->params.peer_data_update_succeeded.data_id, p_evt->params.peer_data_update_succeeded.action);
+            break;
+
+        case PM_EVT_PEER_DATA_UPDATE_FAILED:
+            // Assert.
+            APP_ERROR_CHECK_BOOL(false);
+            break;
+
+        case PM_EVT_PEER_DELETE_SUCCEEDED:
+            break;
+
+        case PM_EVT_PEER_DELETE_FAILED:
+            // Assert.
+            APP_ERROR_CHECK(p_evt->params.peer_delete_failed.error);
+            break;
+
+        case PM_EVT_PEERS_DELETE_SUCCEEDED:
+        	ble_advertising_start(BLE_ADV_MODE_SLOW);
+            break;
+
+        case PM_EVT_PEERS_DELETE_FAILED:
+            // Assert.
+            APP_ERROR_CHECK(p_evt->params.peers_delete_failed_evt.error);
+            break;
+
+        case PM_EVT_LOCAL_DB_CACHE_APPLIED:
+            break;
+
+        case PM_EVT_LOCAL_DB_CACHE_APPLY_FAILED:
+            // The local database has likely changed, send service changed indications.
+            pm_local_database_has_changed();
+            break;
+
+        case PM_EVT_SERVICE_CHANGED_IND_SENT:
+            break;
+
+        case PM_EVT_SERVICE_CHANGED_IND_CONFIRMED:
+            break;
+    }
+}
 
 /**@brief Function for handling advertising events.
  *
@@ -203,6 +344,26 @@ void on_adv_evt(ble_adv_evt_t ble_adv_evt)
     }
 }
 
+void ble_accept_passkey(void) {
+	uint32_t err_code;
+	err_code = sd_ble_gap_auth_key_reply(m_conn_handle,
+			BLE_GAP_AUTH_KEY_TYPE_PASSKEY, NULL);
+	APP_ERROR_CHECK(err_code);
+
+	/* Due to DRGN-7235, dhkey_reply() must come after auth_key_reply() */
+	APP_ERROR_CHECK_BOOL(m_dhkey_req);
+	err_code = sd_ble_gap_lesc_dhkey_reply(m_conn_handle, &m_lesc_dhkey);
+	APP_ERROR_CHECK(err_code);
+	m_dhkey_req = 0;
+
+}
+
+void ble_reject_passkey(void) {
+	uint32_t err_code;
+	err_code = sd_ble_gap_auth_key_reply(m_conn_handle,
+			BLE_GAP_AUTH_KEY_TYPE_NONE, NULL);
+	APP_ERROR_CHECK(err_code);
+}
 
 /**@brief Function for the application's SoftDevice event handler.
  *
@@ -226,15 +387,61 @@ void on_ble_evt(ble_evt_t * p_ble_evt)
 
         case BLE_GAP_EVT_SEC_PARAMS_REQUEST:
             // Pairing not supported
-            err_code = sd_ble_gap_sec_params_reply(m_conn_handle, BLE_GAP_SEC_STATUS_PAIRING_NOT_SUPP, NULL, NULL);
+//            err_code = sd_ble_gap_sec_params_reply(m_conn_handle, BLE_GAP_SEC_STATUS_PAIRING_NOT_SUPP, NULL, NULL);
+//            APP_ERROR_CHECK(err_code);
+            break;
+
+        case BLE_GAP_EVT_PASSKEY_DISPLAY:
+            memcpy(passkey, p_ble_evt->evt.gap_evt.params.passkey_display.passkey, BLE_GAP_PASSKEY_LEN);
+            passkey[BLE_GAP_PASSKEY_LEN] = 0x00;
+            status_set_pairing_request(true);
+            break;
+        case BLE_GAP_EVT_AUTH_KEY_REQUEST:
+            NRF_LOG_PRINTF("BLE_GAP_EVT_AUTH_KEY_REQUEST\n");
+            break;
+        case BLE_GAP_EVT_LESC_DHKEY_REQUEST:
+            NRF_LOG_PRINTF("BLE_GAP_EVT_LESC_DHKEY_REQUEST\n");
+            err_code = ecc_p256_shared_secret_compute(&m_lesc_sk.sk[0], &p_ble_evt->evt.gap_evt.params.lesc_dhkey_request.p_pk_peer->pk[0], &m_lesc_dhkey.key[0]);
             APP_ERROR_CHECK(err_code);
+            m_dhkey_req = 1;
             break;
 
         case BLE_GATTS_EVT_SYS_ATTR_MISSING:
             // No system attributes have been stored.
-            err_code = sd_ble_gatts_sys_attr_set(m_conn_handle, NULL, 0, 0);
-            APP_ERROR_CHECK(err_code);
+//            err_code = sd_ble_gatts_sys_attr_set(m_conn_handle, NULL, 0, 0);
+//            APP_ERROR_CHECK(err_code);
             break;
+
+        case BLE_GATTS_EVT_RW_AUTHORIZE_REQUEST:
+        {
+            ble_gatts_rw_authorize_reply_params_t auth_reply;
+            if(p_ble_evt->evt.gatts_evt.params.authorize_request.type
+               != BLE_GATTS_AUTHORIZE_TYPE_INVALID)
+            {
+                if ((p_ble_evt->evt.gatts_evt.params.authorize_request.request.write.op
+                     == BLE_GATTS_OP_PREP_WRITE_REQ)
+                    || (p_ble_evt->evt.gatts_evt.params.authorize_request.request.write.op
+                     == BLE_GATTS_OP_EXEC_WRITE_REQ_NOW)
+                    || (p_ble_evt->evt.gatts_evt.params.authorize_request.request.write.op
+                     == BLE_GATTS_OP_EXEC_WRITE_REQ_CANCEL))
+                {
+                    if (p_ble_evt->evt.gatts_evt.params.authorize_request.type
+                        == BLE_GATTS_AUTHORIZE_TYPE_WRITE)
+                    {
+                        auth_reply.type = BLE_GATTS_AUTHORIZE_TYPE_WRITE;
+                    }
+                    else
+                    {
+                        auth_reply.type = BLE_GATTS_AUTHORIZE_TYPE_READ;
+                    }
+                    auth_reply.params.write.gatt_status = APP_FEATURE_NOT_SUPPORTED;
+                    err_code = sd_ble_gatts_rw_authorize_reply(p_ble_evt->evt.gap_evt.conn_handle,&auth_reply);
+                    APP_ERROR_CHECK(err_code);
+                }
+            }
+            break;
+        }
+
 
         default:
             // No implementation needed.
@@ -253,10 +460,15 @@ void on_ble_evt(ble_evt_t * p_ble_evt)
  */
 void ble_evt_dispatch(ble_evt_t * p_ble_evt)
 {
-    ble_conn_params_on_ble_evt(p_ble_evt);
-//    ble_nus_on_ble_evt(&m_nus, p_ble_evt);
-    ble_watchs_on_ble_evt(&m_watchs,p_ble_evt);
+    /** The Connection state module has to be fed BLE events in order to function correctly
+     * Remember to call ble_conn_state_on_ble_evt before calling any ble_conns_state_* functions. */
+    ble_conn_state_on_ble_evt(p_ble_evt);
+
+    pm_on_ble_evt(p_ble_evt);
     on_ble_evt(p_ble_evt);
+    ble_conn_params_on_ble_evt(p_ble_evt);
+
+    ble_watchs_on_ble_evt(&m_watchs,p_ble_evt);
     ble_advertising_on_ble_evt(p_ble_evt);
 
 }
@@ -280,6 +492,74 @@ static uint32_t ble_new_event_handler(void)
     return NRF_SUCCESS;
 }
 
+/**@brief Function for the Peer Manager initialization.
+ *
+ * @param[in] erase_bonds  Indicates whether bonding information should be cleared from
+ *                         persistent storage during initialization of the Peer Manager.
+ */
+void peer_manager_init(bool erase_bonds)
+{
+    ble_gap_sec_params_t sec_params;
+    ret_code_t err_code;
+
+    err_code = pm_init();
+    APP_ERROR_CHECK(err_code);
+
+    if (erase_bonds)
+    {
+        (void) pm_peers_delete();
+    }
+
+    memset(&sec_params, 0, sizeof(ble_gap_sec_params_t));
+
+    // Security parameters to be used for all security procedures.
+    sec_params.bond           = 1;
+    sec_params.mitm           = 1;
+    sec_params.lesc           = 1;
+    sec_params.keypress       = 0;
+    sec_params.io_caps        = BLE_GAP_IO_CAPS_DISPLAY_YESNO;
+    sec_params.oob            = 0;
+    sec_params.min_key_size   = 7;
+    sec_params.max_key_size   = 16;
+    sec_params.kdist_own.enc  = 1;
+    sec_params.kdist_own.id   = 1;
+    sec_params.kdist_peer.enc = 1;
+    sec_params.kdist_peer.id  = 1;
+
+    err_code = pm_sec_params_set(&sec_params);
+    APP_ERROR_CHECK(err_code);
+
+    err_code = pm_register(pm_evt_handler);
+    APP_ERROR_CHECK(err_code);
+
+    err_code = fds_register(fds_evt_handler);
+    APP_ERROR_CHECK(err_code);
+
+    ecc_init();
+
+    err_code = ecc_p256_keypair_gen(m_lesc_sk.sk, m_lesc_pk.pk);
+    APP_ERROR_CHECK(err_code);
+
+    /* Set the public key */
+    err_code = pm_lesc_public_key_set(&m_lesc_pk);
+    APP_ERROR_CHECK(err_code);
+}
+
+/**@brief Function for dispatching a system event to interested modules.
+ *
+ * @details This function is called from the System event interrupt handler after a system
+ *          event has been received.
+ *
+ * @param[in]   sys_evt   System stack event.
+ */
+static void sys_evt_dispatch(uint32_t sys_evt)
+{
+    /** Dispatch the system event to the Flash Storage module, where it will be
+     *  dispatched to the Flash Data Storage module and from there to the Peer Manager. */
+    fs_sys_event_handler(sys_evt);
+    ble_advertising_on_sys_evt(sys_evt);
+
+}
 
 /**@brief Function for the SoftDevice initialization.
  *
@@ -309,6 +589,10 @@ void ble_stack_init(void)
 
     // Subscribe for BLE events.
     err_code = softdevice_ble_evt_handler_set(ble_evt_dispatch);
+    APP_ERROR_CHECK(err_code);
+
+    // Register with the SoftDevice handler module for System events.
+    err_code = softdevice_sys_evt_handler_set(sys_evt_dispatch);
     APP_ERROR_CHECK(err_code);
 }
 
@@ -342,17 +626,23 @@ void advertising_init(void)
 void ble_stack_thread(void * arg)
 {
     uint32_t  err_code;
-    bool      erase_bonds;
 
     UNUSED_PARAMETER(arg);
+
+    bool erase_bonds=false;
+    if (!nrf_gpio_pin_read(BUTTON_OK_PIN)){
+    	erase_bonds=true;
+    }
 
     m_ble_event_ready = xSemaphoreCreateBinary();
     // Initialize.
     ble_stack_init();
+    peer_manager_init(erase_bonds);
     gap_params_init();
+    conn_params_init();
     services_init();
     advertising_init();
-    conn_params_init();
+
 
     err_code = ble_advertising_start(BLE_ADV_MODE_SLOW);
     APP_ERROR_CHECK(err_code);
