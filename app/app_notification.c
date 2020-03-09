@@ -28,7 +28,7 @@ static int notifications_count=0;
 static int8_t top_item_index=0;
 static int8_t current_item_index=0;
 static 	int num_items;
-static char date_text[8];
+static char date_text[32];
 static struct tm date;
 
 static const nrf_lcd_t * p_lcd = &nrf_lcd_lpm013m126a;
@@ -68,7 +68,7 @@ static void notification_draw_list(void){
 		gmtime_r((const time_t*)&notification_buf.timestamp,&date);
 
 		if (time_is_older_than_24h(notification_buf.timestamp)){
-			snprintf(date_text, sizeof(date_text), "%02d/%02d",date.tm_mday,date.tm_mon+1);
+			snprintf(date_text, sizeof(date_text), "%02d.%02d",date.tm_mday,date.tm_mon+1);
 		}
 		else{
 			snprintf(date_text, sizeof(date_text), "%02d:%02d",date.tm_hour,date.tm_min);
@@ -174,11 +174,16 @@ void notification_exit(void){
 void notification_draw_full(notification_t *notif){
 	lcd_clear(WHITE);
 
-	nrf_gfx_rect_t sender_text = NRF_GFX_RECT(24,24,LCD_WIDTH-32,20);
-	nrf_gfx_rect_t body_text = NRF_GFX_RECT(4,24+20,LCD_WIDTH-8,LCD_HEIGHT-64);
-	nrf_gfx_point_t item_icon = NRF_GFX_POINT(4,24+4);
+	nrf_gfx_point_t item_date = NRF_GFX_POINT(4+16,20);
+	nrf_gfx_rect_t sender_text = NRF_GFX_RECT(4,34,LCD_WIDTH,20);
+	nrf_gfx_rect_t body_text = NRF_GFX_RECT(4,40+16,LCD_WIDTH-8,LCD_HEIGHT-64);
+	nrf_gfx_point_t item_icon = NRF_GFX_POINT(2,24);
 
 	notification_decode(notif);
+
+	gmtime_r((const time_t*)&notification_buf.timestamp,&date);
+	strftime(date_text, sizeof(date_text), "%R %a %d.%m", &date);
+	nrf_gfx_print(p_lcd, &item_date, BLACK, date_text, date_font, true);
 
 	nrf_gfx_print_box_utf8(p_lcd, &sender_text, BLACK, notification_buf.sender,
 			sender_font, true);
