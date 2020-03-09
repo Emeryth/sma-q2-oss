@@ -18,3 +18,5 @@ src/protobuff/smaq2oss.pb.c
 src/protobuff/smaq2oss.pb.h
 
 Pipfile.lock
+
+src/protobuff/smaq2oss_pb2.py

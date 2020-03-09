@@ -17,7 +17,7 @@ endif
 OUTPUT_FILENAME = $(notdir $(shell pwd))
 
 #directories
-BUILD_DIR = build/
+BUILD_DIR = .build/
 RELEASE_DIR = release/
 PROFILING_RESULTS_DIR = $(BUILD_DIR)profiling_results/
 CPPCHECK_RESULTS_DIR = $(BUILD_DIR)cppcheck_results/
@@ -118,15 +118,6 @@ CPPCHECK_FILES := $(shell find $(SRC_DIRS) -maxdepth 2 \( -iname "*.c" ! -iname 
 CPPCHECK_FLAGS = -q --enable=all --inconclusive --suppress=missingIncludeSystem
 CPPCHECK_RESULTS = $(CPPCHECK_FILES:%=$(CPPCHECK_RESULTS_DIR)%.txt)
 
-#swig
-SWIG = swig
-SWIG_DIR = $(BUILD_DIR)swig/
-SWIG_SRC = $(wildcard $(SWIG_DIR)*.c)
-SRCSWIG = $(wildcard $(SWIG_DIR)*.i)
-SWIGWRAPPERS = $(patsubst $(SWIG_DIR)%.i,$(SWIG_DIR)%_wrap.c,$(SRCSWIG) )
-SWIG_OBJS = $(patsubst $(SWIG_DIR)%.i,$(BUILD_DIR)$(SWIG_DIR)%_wrap.c.o,$(SRCSWIG) ) build/swig/swig_stuff.c.o
-SWIG_FLAGS = -python -I$(SRC_DIRS)
-
 #misc variables
 DIRECTIVES = -DPB_FIELD_16BIT -DLOG_USE_COLOR -DUNITY_OUTPUT_COLOR -DDEBUG_LEVEL=1
 FLAGS = -fPIC
@@ -164,7 +155,7 @@ CFLAGS += -L./pah8series
 CFLAGS += -DARM_MATH_CM4
 
 # keep every function in separate section. This will allow linker to dump unused functions
-LINKER_SCRIPT=armgcc/ble_app_uart_gcc_nrf52.ld
+LINKER_SCRIPT=$(LIB_DIR)/ble_app_uart_gcc_nrf52.ld
 LDFLAGS += -Xlinker -Map=$(BUILD_DIR)/application.map
 LDFLAGS += -mthumb -mabi=aapcs -L $(TEMPLATE_PATH) -T$(LINKER_SCRIPT)
 LDFLAGS += -mcpu=cortex-m4
@@ -269,6 +260,7 @@ $(BUILD_DIR)%.c.o: %.c
 # protocol buffer models
 src/protobuff/%.pb.c:: $(SRCPB) Pipfile.lock
 	pipenv run ./lib/nanopb/generator/protoc --plugin=protoc-gen-nanopb=./lib/nanopb/generator/protoc-gen-nanopb --nanopb_out=. $<
+	pipenv run ./lib/nanopb/generator/protoc --python_out=. $<
 	find src/protobuff -name "*.pb.c" -exec sed -i 's|src/protobuff/||' {} \;
 
 jupyter: Pipfile.lock

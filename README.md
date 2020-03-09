@@ -22,25 +22,18 @@ TBD
     ```
  3. reconfigure bluez in experimental mode to enable all apis
     ```
-    su vi /lib/systemd/system/bluetooth.service
+    $ su vi /lib/systemd/system/bluetooth.service
     ...
     ExecStart=/usr/lib/bluetooth/bluetoothd --experimental
     ```
-4. install dependencies needed for PyGObject
+4. install JLink
    ```
-   sudo apt-get install -y libgirepository1.0-dev build-essential \
-   libbz2-dev libreadline-dev libssl-dev zlib1g-dev libsqlite3-dev wget \
-   curl llvm libncurses5-dev libncursesw5-dev xz-utils tk-dev libcairo2-dev
+   $ wget --post-data 'accept_license_agreement=accepted&non_emb_ctr=confirmed&submit=Download+software' https://www.segger.com/downloads/jlink/JLink_Linux_arm.tgz
+   $ cd JLink_Linux_V646g_arm/
+   $ more README.txt
+   $ sudo cp 99-jlink.rules /etc/udev/rules.d/
+   $ sudo reboot
    ```
-5. edit /etc/xdg/openbox/autostart
-	```
-	xset -dpms                      # turn off display power management system
-	xset s noblank          # turn off screen blanking
-	xset s off                      # turn off screen saver
-	unclutter -idle 0.5 -root&
-	/home/odroid/ElectronReact-0.18.1-arm64.AppImage --no-sandbox&
-	```
-6. ln -s /lib/aarch64-linux-gnu/libz.so.1.2.11 /lib/aarch64-linux-gnu/libz.so
 
 ## References
 > Software tools, hardware, and useful articles
