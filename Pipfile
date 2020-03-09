@@ -3,6 +3,6 @@ python_version = "3.7"
 
 [packages]
 jupyter = "*"
-protobuf-compiler = "*"
+python3-protobuf = "*"
 gatt = "*"
 dbus-python = "*"

@@ -196,8 +196,8 @@ AR = arm-none-eabi-ar
 all: $(PBMODELS) $(RUNNERS) $(OBJECTS) cppcheck
 
 flash: all $(RELEASE_DIR)$(OUTPUT_FILENAME).hex
-	nrfjprog --clockspeed 10000 --program $(RELEASE_DIR)$(OUTPUT_FILENAME).hex -f nrf52  --sectorerase
-	nrfjprog --reset -f nrf52
+	./bin/fw-tool-pi-nrfjprog.sh/nrfjprog.sh --clockspeed 10000 --family nRF52 --flash  $(RELEASE_DIR)$(OUTPUT_FILENAME).hex
+	./bin/fw-tool-pi-nrfjprog.sh/nrfjprog.sh --clockspeed 10000 --family nRF52 --reset 
 
 test: all $(TEST_OBJS) $(TEST_RESULTS) $(CPPCHECK_RESULTS)
 	@echo ""
@@ -259,8 +259,8 @@ $(BUILD_DIR)%.c.o: %.c
 
 # protocol buffer models
 src/protobuff/%.pb.c:: $(SRCPB) Pipfile.lock
-	pipenv run ./lib/nanopb/generator/protoc --plugin=protoc-gen-nanopb=./lib/nanopb/generator/protoc-gen-nanopb --nanopb_out=. $<
-	pipenv run ./lib/nanopb/generator/protoc --python_out=. $<
+	/usr/bin/protoc --plugin=protoc-gen-nanopb=./lib/nanopb/generator/protoc-gen-nanopb --nanopb_out=. $<
+	/usr/bin/protoc --python_out=. $<
 	find src/protobuff -name "*.pb.c" -exec sed -i 's|src/protobuff/||' {} \;
 
 jupyter: Pipfile.lock
