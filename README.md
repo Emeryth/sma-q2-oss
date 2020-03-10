@@ -13,6 +13,7 @@ To maintain compatibility with the softdevice and bootloader already on the watc
 ## Current status
 
   * Shows time
+  * Over 10-day battery life with BLE connected
   * BLE communication secured with passkey comparison pairing
   * Current weather and forecast
   * Music player control
