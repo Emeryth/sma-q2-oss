@@ -1,5 +1,7 @@
 # SMA-Q2-OSS
 
+![banner](banner.jpg)
+
 Open source firmware for the SMA-Q2 smartwatch.
 
 [Project page on hackaday.io](https://hackaday.io/project/85463-color-open-source-smartwatch)
@@ -10,9 +12,16 @@ To maintain compatibility with the softdevice and bootloader already on the watc
 
 ## Current status
 
-  * Basic support for all parts of the watch
-  * Basic BLE support
-  * Basic Gadgetbridge support (setting time)
+  * Shows time
+  * BLE communication secured with passkey comparison pairing
+  * Current weather and forecast
+  * Music player control
+  * Call notifications
+  * Message notifications with message history
+  * Gadgetbridge support
+  * Vibration works
+  * Backlight based on accelerometer orientation or tapping
+  * Heart rate monitor works, but doesn't use the proprietary algorithm lib, so the results are not very useful
 
 ## Smartphone app
 
@@ -21,7 +30,7 @@ To maintain compatibility with the softdevice and bootloader already on the watc
 ## Building
 
 1. Download nRF5 SDK 11.0 and copy the sdk `components` folder to the project folder
-2. Edit `components/toolchain/gcc/Makefile.posix` to point to your toolchain
+2. Edit `components/toolchain/gcc/Makefile.posix` or `Makefile.windows` to point to your toolchain
 2. Install `nrfutil` version **0.5.2**
 3. Patch the TWI driver to allow transfers longer than 255 bytes:
 
@@ -64,5 +73,11 @@ FreeRTOS Copyright (C) Amazon.com, Inc.
 nRF GFX lib Copyright (c) Nordic Semiconductor ASA
 
 CMSIS DSP lib Copyright (C) ARM Limited. 
+
+utf8proc lib Copyright (c) Steven G. Johnson, Jiahao Chen, Peter Colberg, Tony Kelman, Scott P. Jones, and other contributors.
+
+nanopb Copyright (c) Petteri Aimonen
+
+micro-ecc lib Copyright (c) Kenneth MacKay
 
 See headers for licenses.
