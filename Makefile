@@ -197,7 +197,7 @@ all: $(PBMODELS) $(RUNNERS) $(OBJECTS) cppcheck
 
 flash: all $(RELEASE_DIR)$(OUTPUT_FILENAME).hex
 	./bin/fw-tool-pi-nrfjprog.sh/nrfjprog.sh --clockspeed 10000 --family nRF52 --flash  $(RELEASE_DIR)$(OUTPUT_FILENAME).hex
-	./bin/fw-tool-pi-nrfjprog.sh/nrfjprog.sh --clockspeed 10000 --family nRF52 --reset 
+	./bin/fw-tool-pi-nrfjprog.sh/nrfjprog.sh --clockspeed 10000 --family nRF52 --reset
 
 test: all $(TEST_OBJS) $(TEST_RESULTS) $(CPPCHECK_RESULTS)
 	@echo ""
@@ -262,6 +262,7 @@ src/protobuff/%.pb.c:: $(SRCPB) Pipfile.lock
 	/usr/bin/protoc --plugin=protoc-gen-nanopb=./lib/nanopb/generator/protoc-gen-nanopb --nanopb_out=. $<
 	/usr/bin/protoc --python_out=. $<
 	find src/protobuff -name "*.pb.c" -exec sed -i 's|src/protobuff/||' {} \;
+	mv src/protobuff/*_pb2.py notebooks
 
 jupyter: Pipfile.lock
 	( \
@@ -280,6 +281,7 @@ $(TEST_RUNNERS)%.c:: $(TEST_DIRS)%.c
 
 clean:
 	$(CLEANUP) src/protobuff/*.pb.*
+	$(CLEANUP) notebooks/*_pb2.py
 	$(CLEANUP)r $(BUILD_DIR)
 	$(CLEANUP)r $(RELEASE_DIR)
 
