@@ -2,11 +2,16 @@
 
 > Open source firmware for the SMAQ2 smartwatch
 
+[Project page on hackaday.io](https://hackaday.io/project/85463-color-open-source-smartwatch)
 
-TBD.
+The firmware aims to be a drop-in replacement for the original firmware. No additional hardware is required. It can be uploaded using the original OTA bootloader.
+
+To maintain compatibility with the softdevice and bootloader already on the watch, this firmware is based on nRF5 SDK version 11.0.
 
 ### Main Features ###
-TBD
+  * Basic support for all parts of the watch
+  * Basic BLE support
+  * Basic Gadgetbridge support (setting time)
 
 ### Build Instructions ###
 #### Makefile Setup
@@ -70,13 +75,10 @@ TBD
 > Software tools, hardware, and useful articles
 
 ### Software ###
-- [Electron](https://electronjs.org/)
-- [ReactJS](https://reactjs.org/)
-- [Bootstrap](https://getbootstrap.com/)
+- TDB
 
 ### Hardware ###
-- [Odroid C2](https://wiki.odroid.com/odroid-c2/odroid-c2)
-- [Waveshare 4.3inch HDMI LCD](https://www.waveshare.com/4.3inch-hdmi-lcd-b.htm)
+- TBD
 # SMA-Q2-OSS
 
 Open source firmware for the SMA-Q2 smartwatch.
