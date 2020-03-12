@@ -188,7 +188,6 @@ AR = arm-none-eabi-ar
 .PHONY: test
 .PHONY: profile
 .PHONY: jupyter
-.PHONY: pythondeps
 .PHONY: clean
 .PHONY: cppcheck
 .PHONY: reset
