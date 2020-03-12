@@ -11,6 +11,8 @@
 #include "app_music.h"
 #include <stdint.h>
 
+#import "UartLogger.h"
+
 enum ble_message_type {
     MSG_SET_TIME = 0x01,
     MSG_BATTERY_STATE,

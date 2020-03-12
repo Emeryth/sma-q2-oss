@@ -73,12 +73,14 @@ static void on_call_notification(uint8_t* p_data, uint16_t length)
 void ble_handle_message(uint8_t* p_data, uint16_t length)
 {
 
+    app_log_debug("ble_handle_message");
     uint8_t msg_type = p_data[0];
     p_data++;
     length--;
 
     switch (msg_type) {
     case MSG_SET_TIME:
+        app_log_debug("setting time");
         on_set_time(p_data, length);
         break;
     case MSG_SET_WEATHER:

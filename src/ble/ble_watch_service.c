@@ -73,11 +73,12 @@ static void handle_long_write(ble_watchs_t* p_watchs, ble_evt_t* p_ble_evt)
 static void on_write(ble_watchs_t* p_watchs, ble_evt_t* p_ble_evt)
 {
     ble_gatts_evt_write_t* p_evt_write = &p_ble_evt->evt.gatts_evt.params.write;
-
+    app_log_debug("on_write");
     switch (p_evt_write->op) {
     case BLE_GATTS_OP_WRITE_REQ:
         break;
     case BLE_GATTS_OP_EXEC_WRITE_REQ_NOW:
+
         handle_long_write(p_watchs, p_ble_evt);
         return;
         break;

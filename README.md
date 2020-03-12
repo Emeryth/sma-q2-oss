@@ -19,7 +19,7 @@ TBD
 2. install linux packages needed
   ```
   $ apt-get install build-essential pipenv python3-dbus git virtualenv build-essential python3-dev libdbus-glib-1-dev libgirepository1.0-dev libcairo2-dev python3-protobuf protobuf-compiler python-protobuf gcc-arm-none-eabi binutils-arm-none-eabi gdb-arm-none-eabi openocd
-  pip3 install dbus-python
+  pip3 install python3-pydbus python3-gi
   ```
 3. reconfigure bluez in experimental mode to enable all apis
   ```
