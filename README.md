@@ -3,8 +3,7 @@
 > Open source firmware for the SMAQ2 smartwatch
 
 
-The Fluke / Philips PM630X line of LCR meters were a line of benchtop equipment that allowed the testing of components with a frequency up to 1MHZ. Even though the meter was designed over 20 years ago it is still highly capable and has specs similar to modern commercial meters. The major advantage modern meters have are their updated rich UIs which are much more featureful and powerful than the LED display leveraged in this device. Fortunately PM630X meters include an optional RS232 port which allows fully remote control of the unit. This project leverages this serial port to build a modern high resolution TFT-based UI
-on this device that significantly expands the utility of the base unit.
+TBD.
 
 ### Main Features ###
 TBD
@@ -16,10 +15,13 @@ TBD
   $ git submodule init
   $ git submodule update
   ```
-2. install linux packages needed
+2. install linux and python packages needed
   ```
-  $ apt-get install build-essential pipenv python3-dbus git virtualenv build-essential python3-dev libdbus-glib-1-dev libgirepository1.0-dev libcairo2-dev python3-protobuf protobuf-compiler python-protobuf gcc-arm-none-eabi binutils-arm-none-eabi gdb-arm-none-eabi openocd
-  pip3 install python3-pydbus python3-gi
+  $ apt-get install build-essential protobuf-compiler gcc-arm-none-eabi binutils-arm-none-eabi gdb-arm-none-eabi openocd nodejs npm
+  $ apt-get install --no-install-recommends bluetoot
+  $ apt-get install python3-dbus python3-protobuf
+  $ sudo pip3 install gatt jupyterlab jupyterlab-git
+  $ jupyter lab build
   ```
 3. reconfigure bluez in experimental mode to enable all apis
   ```
@@ -36,6 +38,33 @@ TBD
   $ ln -s JLink_Linux_V646g_arm/JLinkExe ~/.local/bin
   $ sudo reboot
   ```
+  5. (optional) configure jupyter to start by default
+  /etc/systemd/system/jupyter.service
+  ```
+  [Unit]
+  Description=Jupyter Workplace
+
+  [Service]
+  Type=simple
+  PIDFile=/run/jupyter.pid
+  ExecStart=/home/pi/.local/bin/jupyter-lab notebooks/ --allow-root --no-mathjax --ip=0.0.0.0 --port=8888 --no-browser --NotebookApp.token=''
+  User=pi
+  Group=pi
+  WorkingDirectory=/home/pi/src/sma-q2-oss
+  Restart=always
+  RestartSec=10
+
+  [Install]
+  WantedBy=multi-user.target
+
+  ```
+  enable the service
+  ```
+  $ sudo systemctl enable jupyter.service
+  $ sudo systemctl daemon-reload
+  $ sudo systemctl restart jupyter.service
+  ```
+
 
 ## References
 > Software tools, hardware, and useful articles

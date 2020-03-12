@@ -191,10 +191,13 @@ AR = arm-none-eabi-ar
 .PHONY: pythondeps
 .PHONY: clean
 .PHONY: cppcheck
+.PHONY: reset
 .PHONY: flash
 
 all: $(PBMODELS) $(RUNNERS) $(OBJECTS) cppcheck
 
+reset:
+	./bin/fw-tool-pi-nrfjprog.sh/nrfjprog.sh --clockspeed 10000 --family nRF52 --reset
 flash: all $(RELEASE_DIR)$(OUTPUT_FILENAME).hex
 	./bin/fw-tool-pi-nrfjprog.sh/nrfjprog.sh --clockspeed 10000 --family nRF52 --flash  $(RELEASE_DIR)$(OUTPUT_FILENAME).hex
 	./bin/fw-tool-pi-nrfjprog.sh/nrfjprog.sh --clockspeed 10000 --family nRF52 --reset
@@ -264,14 +267,9 @@ src/protobuff/%.pb.c:: $(SRCPB) Pipfile.lock
 	find src/protobuff -name "*.pb.c" -exec sed -i 's|src/protobuff/||' {} \;
 	mv src/protobuff/*_pb2.py notebooks
 
-jupyter: Pipfile.lock
+jupyter:
 	( \
-		pipenv run jupyter notebook --allow-root --no-mathjax --ip=0.0.0.0 --port=8888 --no-browser \
-	)
-
-Pipfile.lock: Pipfile
-	( \
-		pipenv install \
+		jupyter-lab notebooks/ --allow-root --no-mathjax --ip=0.0.0.0 --port=8888 --no-browser --NotebookApp.token='' \
 	)
 
 #unity test runners
