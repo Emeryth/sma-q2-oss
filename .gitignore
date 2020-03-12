@@ -20,3 +20,8 @@ src/protobuff/smaq2oss.pb.h
 Pipfile.lock
 
 src/protobuff/smaq2oss_pb2.py
+
+notebooks/.ipynb_checkpoints/
+notebooks/__pycache__/
+notebooks/smaq2oss_pb2.py
+
