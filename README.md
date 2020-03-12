@@ -2,11 +2,7 @@
 
 > Open source firmware for the SMAQ2 smartwatch
 
-[Project page on hackaday.io](https://hackaday.io/project/85463-color-open-source-smartwatch)
-
-The firmware aims to be a drop-in replacement for the original firmware. No additional hardware is required. It can be uploaded using the original OTA bootloader.
-
-To maintain compatibility with the softdevice and bootloader already on the watch, this firmware is based on nRF5 SDK version 11.0.
+As [featured on hackaday.io](https://hackaday.io/project/85463-color-open-source-smartwatch) this firmware aims to be a drop-in replacement for the original firmware. No additional hardware is required. It can be uploaded using the original OTA bootloader.To maintain compatibility with the softdevice and bootloader already on the watch, this firmware is based on nRF5 SDK version 11.0.
 
 ### Main Features ###
   * Basic support for all parts of the watch
