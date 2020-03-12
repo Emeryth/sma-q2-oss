@@ -1,8 +1,0 @@
-[requires]
-python_version = "3.7"
-
-[packages]
-jupyter = "*"
-python3-protobuf = "*"
-gatt = "*"
-dbus-python = "*"
