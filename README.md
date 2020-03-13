@@ -14,7 +14,7 @@ As [featured on hackaday.io](https://hackaday.io/project/85463-color-open-source
 1. install linux and python packages needed
   ```
   $ apt-get update && apt-get upgrade
-  $ apt-get install git build-essential gcc-arm-none-eabi binutils-arm-none-eabi gdb-arm-none-eabi openocd nodejs npm python3-dbus bluetooth pipenv protobuf-compile python-protobuf python3-dbus python3-dev libdbus-glib-1-dev libgirepository1.0-dev libcairo2-dev
+  $ apt-get install git build-essential gcc-arm-none-eabi binutils-arm-none-eabi gdb-arm-none-eabi openocd nodejs npm python3-dbus bluetooth pipenv protobuf-compile python-protobuf python3-dbus python3-dev libdbus-glib-1-dev libgirepository1.0-dev libcairo2-dev cppcheck valgrind
   $ sudo pip3 install gatt jupyterlab jupyterlab-git
   ```
 2.  initialize submodules

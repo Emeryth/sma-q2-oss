@@ -1,19 +1,3 @@
-ifeq ($(OS),Windows_NT)
-  ifeq ($(shell uname -s),) # not in a bash-like shell
-	CLEANUP = del /F /Q
-	MKDIR = mkdir
-  else # in a bash-like shell, like msys
-	CLEANUP = rm -f
-	MKDIR = mkdir -p
-  endif
-	TARGET_EXTENSION=.exe
-else
-	CLEANUP = rm -f
-	MKDIR = mkdir -p
-	TARGET_EXTENSION=out
-endif
-#todo: on osx you need sed like this: sed -i ""
-
 OUTPUT_FILENAME = $(notdir $(shell pwd))
 
 #directories
@@ -83,7 +67,7 @@ RUNNERS = $(patsubst $(TEST_DIRS)%.c,$(TEST_RUNNERS)%.c,$(SRCT) )
 TEST_RESULTS = $(patsubst $(TEST_DIRS)Test%.c,$(TEST_RESULTS_DIR)Test%.txt,$(SRCT) )
 PROFILING_RESULTS = $(patsubst $(TEST_DIRS)Test%.c,$(PROFILING_RESULTS_DIR)Test%.out,$(SRCT) )
 TEST_OBJS = $(SRCT:%=$(BUILD_DIR)%.o)
-UNITY_ROOT=/lib/unity
+UNITY_ROOT=$(LIB_DIR)/unity
 
 #valgrind stuff
 VALGRIND = /usr/bin/valgrind
@@ -113,13 +97,22 @@ C_OBJECTS = $(SRCS:%=$(BUILD_DIR)%.o) $(PB_OBJS)
 INC_DIRS := $(shell find $(LIB_DIRS) $(SRC_DIRS) -maxdepth 2 -type d)
 
 #cppcheck
-CPPCHECK = cppcheck
+CPPCHECK = /usr/bin/cppcheck
 CPPCHECK_FILES := $(shell find $(SRC_DIRS) -maxdepth 2 \( -iname "*.c" ! -iname "*.pb.c" \))
-CPPCHECK_FLAGS = -q --enable=all --inconclusive --suppress=missingIncludeSystem
+CPPCHECK_FLAGS = -q --enable=all --inconclusive --suppress=missingIncludeSystem --suppress='*:$(LIB_DIR)/*'
 CPPCHECK_RESULTS = $(CPPCHECK_FILES:%=$(CPPCHECK_RESULTS_DIR)%.txt)
 
 #misc variables
 DIRECTIVES = -DPB_FIELD_16BIT -DLOG_USE_COLOR -DUNITY_OUTPUT_COLOR -DDEBUG_LEVEL=1
+DIRECTIVES  += -DNRF52
+DIRECTIVES += -DSOFTDEVICE_PRESENT
+DIRECTIVES += -DBOARD_CUSTOM
+DIRECTIVES += -DNRF52_PAN_12 -DNRF52_PAN_15 -DNRF52_PAN_58 -DNRF52_PAN_55 -DNRF52_PAN_54 -DNRF52_PAN_31 -DNRF52_PAN_30 -DNRF52_PAN_51 -DNRF52_PAN_36 -DNRF52_PAN_53
+DIRECTIVES += -DNRF52_PAN_20 -DNRF52_PAN_64 -DNRF52_PAN_62 -DNRF52_PAN_63
+DIRECTIVES += -DS132
+DIRECTIVES += -DCONFIG_GPIO_AS_PINRESET
+DIRECTIVES += -DBLE_STACK_SUPPORT_REQD
+DIRECTIVES += -DSWI_DISABLE0
 FLAGS = -fPIC
 INC_FLAGS := $(addprefix -I,$(INC_DIRS)) -I./src
 CURRENT_DIR = $(notdir $(shell pwd))
@@ -134,16 +127,8 @@ ASM_OBJECTS = $(addprefix $(BUILD_DIR), $(ASM_SOURCE_FILE_NAMES:.s=.o) )
 vpath %.s $(ASM_PATHS)
 OBJECTS = $(C_OBJECTS) $(ASM_OBJECTS)
 
+
 #flags common to all targets
-CFLAGS += -DNRF52
-CFLAGS += -DSOFTDEVICE_PRESENT
-CFLAGS += -DBOARD_CUSTOM
-CFLAGS += -DNRF52_PAN_12 -DNRF52_PAN_15 -DNRF52_PAN_58 -DNRF52_PAN_55 -DNRF52_PAN_54 -DNRF52_PAN_31 -DNRF52_PAN_30 -DNRF52_PAN_51 -DNRF52_PAN_36 -DNRF52_PAN_53
-CFLAGS += -DNRF52_PAN_20 -DNRF52_PAN_64 -DNRF52_PAN_62 -DNRF52_PAN_63
-CFLAGS += -DS132
-CFLAGS += -DCONFIG_GPIO_AS_PINRESET
-CFLAGS += -DBLE_STACK_SUPPORT_REQD
-CFLAGS += -DSWI_DISABLE0
 CFLAGS += -mcpu=cortex-m4
 CFLAGS += -mthumb -mabi=aapcs --std=gnu99
 CFLAGS += -Wall -Og -g3
@@ -180,6 +165,16 @@ ASMFLAGS += -DSWI_DISABLE0
 ASMFLAGS += -D__HEAP_SIZE=512
 ASMFLAGS += -DARM_MATH_CM4
 
+TARGET_EXTENSION=out
+
+CLEANUP = rm -f
+MKDIR = mkdir -p
+PIPENV = /usr/bin/pipenv
+PROTOC = /usr/bin/protoc
+FIND = /usr/bin/find
+MV = /bin/mv
+SED = /bin/sed
+
 CC = arm-none-eabi-gcc
 LD = arm-none-eabi-ld
 AR = arm-none-eabi-ar
@@ -194,7 +189,7 @@ AR = arm-none-eabi-ar
 .PHONY: reset
 .PHONY: flash
 
-all: $(PBMODELS) $(RUNNERS) $(OBJECTS) cppcheck
+all: $(PBMODELS) $(RUNNERS) $(OBJECTS)
 
 reset:
 	./bin/fw-tool-pi-nrfjprog.sh/nrfjprog.sh --clockspeed 10000 --family nRF52 --reset
@@ -202,6 +197,7 @@ flash: all $(RELEASE_DIR)$(OUTPUT_FILENAME).hex
 	./bin/fw-tool-pi-nrfjprog.sh/nrfjprog.sh --clockspeed 10000 --family nRF52 --flash  $(RELEASE_DIR)$(OUTPUT_FILENAME).hex
 	./bin/fw-tool-pi-nrfjprog.sh/nrfjprog.sh --clockspeed 10000 --family nRF52 --reset
 
+cppcheck: all $(CPPCHECK_RESULTS)
 test: all $(TEST_OBJS) $(TEST_RESULTS) $(CPPCHECK_RESULTS)
 	@echo ""
 	@echo "-----------------------ANALYSIS AND TESTING SUMMARY-----------------------"
@@ -253,7 +249,7 @@ $(BUILD_DIR)%.o: %.s
 #execute cppcheck
 $(CPPCHECK_RESULTS_DIR)%.c.txt: %.c
 	$(MKDIR) $(dir $@)
-	$(CPPCHECK) $(INC_FLAGS) $(DIRECTIVES) $(CPPCHECK_FLAGS) $< > $@ 2>&1
+	$(CPPCHECK) $(INC_FLAGS) $(DIRECTIVES) -DARM_MATH_CM4 -D__GNUC__ $(CPPCHECK_FLAGS) $< > $@ 2>&1
 
 # c source
 $(BUILD_DIR)%.c.o: %.c
@@ -262,19 +258,19 @@ $(BUILD_DIR)%.c.o: %.c
 
 # protocol buffer models
 src/protobuff/%.pb.c:: $(SRCPB)
-	/usr/bin/protoc --plugin=protoc-gen-nanopb=./lib/nanopb/generator/protoc-gen-nanopb --nanopb_out=. $<
-	/usr/bin/protoc --python_out=. $<
-	find src/protobuff -name "*.pb.c" -exec sed -i 's|src/protobuff/||' {} \;
-	mv src/protobuff/*_pb2.py notebooks
+	$(PROTOC) --plugin=protoc-gen-nanopb=./lib/nanopb/generator/protoc-gen-nanopb --nanopb_out=. $<
+	$(PROTOC) --python_out=. $<
+	$(FIND) src/protobuff -name "*.pb.c" -exec $(SED) -i 's|src/protobuff/||' {} \;
+	$(MV) src/protobuff/*_pb2.py notebooks
 
 Pipfile.lock: Pipfile
 	( \
-		pipenv install \
+		$(PIPENV) install \
 		pipenv run jupyter lab build \
 	)
 jupyter: Pipfile.lock
 	( \
-		jupyter-lab notebooks/ --allow-root --no-mathjax --ip=0.0.0.0 --port=8888 --no-browser --NotebookApp.token='' \
+		$(PIPENV) run jupyter-lab notebooks/ --allow-root --no-mathjax --ip=0.0.0.0 --port=8888 --no-browser --NotebookApp.token='' \
 	)
 
 #unity test runners

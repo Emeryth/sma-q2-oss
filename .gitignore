@@ -1,6 +1,7 @@
 .project
 .cproject
 .settings
+.build
 *.o
 *.map
 *.hex
@@ -25,3 +26,5 @@ notebooks/.ipynb_checkpoints/
 notebooks/__pycache__/
 notebooks/smaq2oss_pb2.py
 
+
+test/test_runners/
