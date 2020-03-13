@@ -1,0 +1,11 @@
+[requires]
+python_version = "3.7"
+
+[packages]
+jupyterlab = "*"
+jupyterlab-git = "*"
+gatt = "*"
+dbus-python = "*"
+pygobject = "*"
+protobuf = "*"
+arrow = "*"
