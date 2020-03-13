@@ -11,18 +11,16 @@ As [featured on hackaday.io](https://hackaday.io/project/85463-color-open-source
 
 ### Build Instructions ###
 #### Makefile Setup
-1.  initialize submodules
+1. install linux and python packages needed
+  ```
+  $ apt-get update && apt-get upgrade
+  $ apt-get install git build-essential gcc-arm-none-eabi binutils-arm-none-eabi gdb-arm-none-eabi openocd nodejs npm python3-dbus bluetooth pipenv protobuf-compile python-protobuf python3-dbus python3-dev libdbus-glib-1-dev libgirepository1.0-dev libcairo2-dev
+  $ sudo pip3 install gatt jupyterlab jupyterlab-git
+  ```
+2.  initialize submodules
   ```
   $ git submodule init
   $ git submodule update
-  ```
-2. install linux and python packages needed
-  ```
-  $ apt-get install build-essential protobuf-compiler gcc-arm-none-eabi binutils-arm-none-eabi gdb-arm-none-eabi openocd nodejs npm
-  $ apt-get install --no-install-recommends bluetoot
-  $ apt-get install python3-dbus python3-protobuf
-  $ sudo pip3 install gatt jupyterlab jupyterlab-git
-  $ jupyter lab build
   ```
 3. reconfigure bluez in experimental mode to enable all apis
   ```
@@ -30,7 +28,21 @@ As [featured on hackaday.io](https://hackaday.io/project/85463-color-open-source
   ...
   ExecStart=/usr/lib/bluetooth/bluetoothd --experimental
   ```
-4. install JLink
+4. punch a hole for "pi" user
+  ```
+  $ sudo vi /etc/dbus-1/system.d/bluetooth.conf
+  ...
+  <policy user="pi">
+    <allow own="org.bluez"/>
+    <allow send_destination="org.bluez"/>
+    <allow send_interface="org.bluez.GattCharacteristic1"/>
+    <allow send_interface="org.bluez.GattDescriptor1"/>
+    <allow send_interface="org.freedesktop.DBus.ObjectManager"/>
+    <allow send_interface="org.freedesktop.DBus.Properties"/>
+  </policy>
+
+  ```
+5. install JLink
   ```
   $ wget --post-data 'accept_license_agreement=accepted&non_emb_ctr=confirmed&submit=Download+software' https://www.segger.com/downloads/jlink/JLink_Linux_arm.tgz
   $ cd JLink_Linux_V646g_arm/
@@ -65,6 +77,7 @@ As [featured on hackaday.io](https://hackaday.io/project/85463-color-open-source
   $ sudo systemctl daemon-reload
   $ sudo systemctl restart jupyter.service
   ```
+
 
 
 ## References

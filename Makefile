@@ -188,6 +188,7 @@ AR = arm-none-eabi-ar
 .PHONY: test
 .PHONY: profile
 .PHONY: jupyter
+.PHONY: pythondeps
 .PHONY: clean
 .PHONY: cppcheck
 .PHONY: reset
@@ -260,13 +261,18 @@ $(BUILD_DIR)%.c.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
 # protocol buffer models
-src/protobuff/%.pb.c:: $(SRCPB) Pipfile.lock
+src/protobuff/%.pb.c:: $(SRCPB)
 	/usr/bin/protoc --plugin=protoc-gen-nanopb=./lib/nanopb/generator/protoc-gen-nanopb --nanopb_out=. $<
 	/usr/bin/protoc --python_out=. $<
 	find src/protobuff -name "*.pb.c" -exec sed -i 's|src/protobuff/||' {} \;
 	mv src/protobuff/*_pb2.py notebooks
 
-jupyter:
+Pipfile.lock: Pipfile
+	( \
+		pipenv install \
+		pipenv run jupyter lab build \
+	)
+jupyter: Pipfile.lock
 	( \
 		jupyter-lab notebooks/ --allow-root --no-mathjax --ip=0.0.0.0 --port=8888 --no-browser --NotebookApp.token='' \
 	)
