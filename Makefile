@@ -128,6 +128,11 @@ vpath %.s $(ASM_PATHS)
 OBJECTS = $(C_OBJECTS) $(ASM_OBJECTS)
 
 
+# $(info $$TEST_OBJECTS is [${TEST_OBJECTS}])
+# exit 1
+
+
+
 #flags common to all targets
 CFLAGS += -mcpu=cortex-m4
 CFLAGS += -mthumb -mabi=aapcs --std=gnu99
@@ -178,6 +183,26 @@ SED = /bin/sed
 CC = arm-none-eabi-gcc
 LD = arm-none-eabi-ld
 AR = arm-none-eabi-ar
+
+ifeq ($(filter test,$(MAKECMDGOALS)),test)
+CC = gcc
+LD = ld
+AR = ar
+CFLAGS =  -O0 -g3 $(INC_FLAGS)
+LDFLAGS = -shared
+
+SRCS := $(filter-out src/main.c,$(SRCS))
+SRCS := $(filter-out src/ble/%,$(SRCS))
+SRCS := $(filter-out src/gfx/%,$(SRCS))
+SRCS := $(filter-out src/app/%,$(SRCS))
+SRCS := $(filter-out src/util/%,$(SRCS))
+SRCS := $(filter-out src/hardware/%,$(SRCS))
+SRCS := $(filter-out lib/nRF5_SDK_11.0.0_89a8197/%, $(SRCS))
+SRCS := $(filter-out lib/freertos/%,$(SRCS))
+OBJECTS = $(C_OBJECTS)
+
+endif
+
 
 .PHONY: all
 .PHONY: test
@@ -239,7 +264,7 @@ $(TEST_RESULTS_DIR)%.txt: $(BUILD_DIR)%.c.o.$(TARGET_EXTENSION)
 
 #build the test runners
 $(BUILD_DIR)%.c.o.$(TARGET_EXTENSION): $(TEST_OUTPUT)%.c.o
-	$(CC) -g -o $@ $^ $(CFLAGS) $(OBJECTS) $(UNITY_ROOT)/src/unity.c $(TEST_RUNNERS)$(basename $(notdir $<))
+	$(CC) -g -o $@ $^ $(INC_FLAGS) $(DIRECTIVES) $(OBJECTS) $(TEST_RUNNERS)$(basename $(notdir $<))
 
 # assembly
 $(BUILD_DIR)%.o: %.s
