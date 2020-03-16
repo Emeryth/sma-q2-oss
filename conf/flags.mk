@@ -1,7 +1,7 @@
 
 FLAGS = -fPIC
 CFLAGS = $(INC_FLAGS) $(FLAGS) $(DIRECTIVES) --std=gnu99
-LIBS = lib/libarm_cortexM4lf_math.a
+LIBS = lib/libarm_cortexM4lf_math.a lib/micro_ecc_lib_nrf52.a
 
 DIRECTIVES = -DPB_FIELD_16BIT -DLOG_USE_COLOR -DUNITY_OUTPUT_COLOR -DDEBUG_LEVEL=1
 

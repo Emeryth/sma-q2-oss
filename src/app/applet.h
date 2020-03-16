@@ -10,28 +10,33 @@
 
 #include "buttons.h"
 
-typedef struct {
 
-    int id;
-    void (*process_applet)(void);
-    void (*draw_applet)(void);
-    void (*handle_button_evt)(button_event_t* evt);
-    void (*enter_applet)(void);
-    void (*exit_applet)(void);
-    int previous_applet;
+typedef struct{
 
-} applet_t;
+	int id;
+	void (*process_applet)(void);
+	void (*draw_applet)(void);
+	void (*handle_button_evt)(button_event_t *evt);
+	void (*enter_applet)(void);
+	void (*exit_applet)(void);
+	int previous_applet;
 
-enum applet_id {
-    APPLET_WATCHFACE,
-    APPLET_MENU,
-    APPLET_TETRIS,
-    APPLET_HRM,
-    APPLET_MUSIC,
-    APPLET_BATTERY,
-    APPLET_CALL,
-    APPLET_WEATHER,
-    NUM_APPLETS
+
+}applet_t;
+
+enum applet_id{
+	APPLET_WATCHFACE,
+	APPLET_MENU,
+	APPLET_TETRIS,
+	APPLET_HRM,
+	APPLET_MUSIC,
+	APPLET_BATTERY,
+	APPLET_CALL,
+	APPLET_WEATHER,
+	APPLET_NOTIFICATIONS,
+	APPLET_NOTIF_POPUP,
+	APPLET_PAIRING,
+	NUM_APPLETS
 };
 
 extern applet_t applets[NUM_APPLETS];

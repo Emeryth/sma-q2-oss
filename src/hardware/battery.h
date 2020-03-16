@@ -5,19 +5,17 @@
  *      Author: Andrzej Surowiec
  */
 
-#include <stdio.h>
-
 #ifndef HARDWARE_BATTERY_H_
 #define HARDWARE_BATTERY_H_
 
-enum battery {
-    BATTERY_DISCHARGING,
-    BATTERY_CHARGING,
-    BATTERY_CHARGED,
-    BATTERY_FAULT
+enum battery{
+	BATTERY_DISCHARGING,
+	BATTERY_CHARGING,
+	BATTERY_CHARGED,
+	BATTERY_FAULT
 };
 
-#define BATTERY_HISTORY_LENGTH 128
+#define BATTERY_HISTORY_LENGTH 6*24
 #define BATTERY_100P 290
 #define BATTERY_0P 250
 
@@ -29,5 +27,6 @@ int battery_get_voltage(void);
 uint8_t battery_get_percent(void);
 uint8_t battery_get_charge_status(void);
 void battery_save_history(void);
+
 
 #endif /* HARDWARE_BATTERY_H_ */
