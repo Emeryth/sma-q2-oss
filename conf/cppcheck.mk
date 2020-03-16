@@ -8,5 +8,5 @@ CPPCHECK_RESULTS = $(CPPCHECK_FILES:%=$(CPPCHECK_RESULTS_DIR)%.txt)
 #execute cppcheck
 $(CPPCHECK_RESULTS_DIR)%.c.txt: %.c
 	@$(MKDIR) $(dir $@)
-	$(CPPCHECK) $(INC_FLAGS) $(DIRECTIVES)  $(CPPCHECK_FLAGS) $< > $@ 2>&1
+	@$(CPPCHECK) $(INC_FLAGS) $(DIRECTIVES)  $(CPPCHECK_FLAGS) $< > $@ 2>&1
 	@echo -n "."
