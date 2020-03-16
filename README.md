@@ -10,25 +10,30 @@ As [featured on hackaday.io](https://hackaday.io/project/85463-color-open-source
   * Basic Gadgetbridge support (setting time)
 
 ### Build Instructions ###
-#### Makefile Setup
+#### Basic Build Setup
 1. install linux and python packages needed
   ```
   $ apt-get update && apt-get upgrade
   $ apt-get install git build-essential gcc-arm-none-eabi binutils-arm-none-eabi gdb-arm-none-eabi openocd nodejs npm python3-dbus bluetooth pipenv protobuf-compile python-protobuf python3-dbus python3-dev libdbus-glib-1-dev libgirepository1.0-dev libcairo2-dev cppcheck valgrind
-  $ sudo pip3 install gatt jupyterlab jupyterlab-git
   ```
 2.  initialize submodules
   ```
   $ git submodule init
   $ git submodule update
   ```
-3. reconfigure bluez in experimental mode to enable all apis
+3. build dfu image
+  ```
+  $ make dfu
+  ```
+#### Simulated Bluetooth Central
+By default you can pair you watch with a phone running [gadgetbridge](https://github.com/Emeryth/Gadgetbridge) and use all features of the phone. One limitation of this approach is that it requires that you release a new version of the Android APK along side your watch each time you iterate on new messages. To get around this the project includes a set of Jupyter notebooks that use python to simulate a Bluetooth central device. In this way you can interract with your watch and iterate on new message formats without needing to recompile and install an android app. To set this up do the following:
+1. Reconfigure bluez in experimental mode. Since some APIs have not yet been mainlined you need this flag to enable all apis.
   ```
   $ sudo vi /lib/systemd/system/bluetooth.service
   ...
   ExecStart=/usr/lib/bluetooth/bluetoothd --experimental
   ```
-4. punch a hole for "pi" user
+2. Ensure that you have appropriate permissions for the user you will be running the notebook as to interract with the bluetooth phy. In this case the below snippet allows the "pi" user access:
   ```
   $ sudo vi /etc/dbus-1/system.d/bluetooth.conf
   ...
@@ -42,42 +47,10 @@ As [featured on hackaday.io](https://hackaday.io/project/85463-color-open-source
   </policy>
 
   ```
-5. install JLink
+3. Start up the notebook. Note that once started you should be able to go to http://localhost:8888 and see demo notebooks that let you interract with the watch.
   ```
-  $ wget --post-data 'accept_license_agreement=accepted&non_emb_ctr=confirmed&submit=Download+software' https://www.segger.com/downloads/jlink/JLink_Linux_arm.tgz
-  $ cd JLink_Linux_V646g_arm/
-  $ more README.txt
-  $ sudo cp 99-jlink.rules /etc/udev/rules.d/
-  $ ln -s JLink_Linux_V646g_arm/JLinkExe ~/.local/bin
-  $ sudo reboot
+  $ make jupyter
   ```
-  5. (optional) configure jupyter to start by default
-  /etc/systemd/system/jupyter.service
-  ```
-  [Unit]
-  Description=Jupyter Workplace
-
-  [Service]
-  Type=simple
-  PIDFile=/run/jupyter.pid
-  ExecStart=/home/pi/.local/bin/jupyter-lab notebooks/ --allow-root --no-mathjax --ip=0.0.0.0 --port=8888 --no-browser --NotebookApp.token=''
-  User=pi
-  Group=pi
-  WorkingDirectory=/home/pi/src/sma-q2-oss
-  Restart=always
-  RestartSec=10
-
-  [Install]
-  WantedBy=multi-user.target
-
-  ```
-  enable the service
-  ```
-  $ sudo systemctl enable jupyter.service
-  $ sudo systemctl daemon-reload
-  $ sudo systemctl restart jupyter.service
-  ```
-
 
 
 ## References
