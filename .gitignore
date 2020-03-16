@@ -10,4 +10,9 @@
 components
 armgcc/_build
 gfx/screen.png
+.build
 
+
+*.DS_Store
+
+Pipfile.lock
