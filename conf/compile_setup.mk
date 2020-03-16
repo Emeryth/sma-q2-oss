@@ -15,6 +15,7 @@ FILTERED_SRCS := $(filter-out lib/nRF5_SDK_11.0.0_89a8197/components/libraries/u
 FILTERED_SRCS := $(filter-out lib/nRF5_SDK_11.0.0_89a8197/components/toolchain/system_nrf51.c,$(FILTERED_SRCS))
 FILTERED_SRCS := $(filter-out lib/nRF5_SDK_11.0.0_89a8197/components/toolchain/system_nrf51422.c,$(FILTERED_SRCS))
 FILTERED_SRCS := $(filter-out lib/nRF5_SDK_11.0.0_89a8197/external/freertos/%,$(FILTERED_SRCS))
+FILTERED_SRCS := $(filter-out lib/freertos/heap_4.c,$(FILTERED_SRCS))
 
 #take the filtered srcs and create a list of object files to generate
 FILTERED_OBJECTS = $(FILTERED_SRCS:%=$(BUILD_DIR)%.o)
