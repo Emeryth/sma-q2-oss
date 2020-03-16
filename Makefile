@@ -8,6 +8,7 @@ PROJECT_NAME = $(notdir $(shell pwd))
 .PHONY: cppcheck
 .PHONY: reset
 .PHONY: flash
+.PHONY: patch
 
 include conf/common.mk
 include conf/compile_setup.mk
@@ -15,6 +16,7 @@ include conf/compile.mk
 include conf/tests.mk
 include conf/programming.mk
 include conf/jupyter.mk
+include conf/patch.mk
 
 clean:
 	$(CLEANUP) src/protobuff/*.pb.*

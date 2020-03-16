@@ -1,6 +1,8 @@
 include conf/nrf_libs.mk
 
 CP = cp
+CD = cd
+PATCH = patch
 CLEANUP = rm -f
 MKDIR = mkdir -p
 FIND = /usr/bin/find
@@ -11,6 +13,7 @@ SRC_DIR = src
 LIB_DIR = lib
 BUILD_DIR = .build/
 RELEASE_DIR = release/
+PATCH_DIR = patch
 CONFIG_DIR = conf/
 NRF5_SDK_DIR = $(LIB_DIR)/nRF5_SDK_11.0.0_89a8197
 UNITY_ROOT=$(LIB_DIR)/unity
