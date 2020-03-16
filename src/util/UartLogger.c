@@ -49,10 +49,10 @@ static void log_log(bool append, bool terminate, int level, const char* file, co
     char buf[100] = { 0 };
     if (level >= DEBUG_LEVEL) {
         if (!append) {
-
             snprintf(buf,
                 100,
                 "%s%s %s%-5s\x1b[0m \x1b[90m%s:%s:%d:\x1b[0m ",
+                // cppcheck-suppress sprintfOverlappingData symbolName=buf
                 buf,
                 "\r\n",
                 level_colors[level],
@@ -70,8 +70,7 @@ static void log_log(bool append, bool terminate, int level, const char* file, co
 
             snprintf(buf,
                 2,
-                "\r\n",
-                buf);
+                "\r\n");
             uart_putstring(buf);
         }
     }

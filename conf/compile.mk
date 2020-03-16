@@ -1,9 +1,15 @@
 include conf/protobuff.mk
+include conf/cppcheck.mk
 
 OBJCOPY = arm-none-eabi-objcopy
 
 #our default target is to compile all the proto files into c files, then to generate all the objects
-all: $(PBMODELS) $(OBJECTS)
+all: $(PBMODELS) $(OBJECTS) $(CPPCHECK_RESULTS)
+	@echo ""
+	@echo `find $(CPPCHECK_RESULTS_DIR) -type f -exec grep warning {} \;|wc -l` "code warnings"
+	@echo `find $(CPPCHECK_RESULTS_DIR) -type f -exec grep warning {} \;`
+	@echo `find $(CPPCHECK_RESULTS_DIR) -type f -exec grep error {} \;|wc -l` "code errors"
+	@echo "`find $(CPPCHECK_RESULTS_DIR) -type f -exec grep error {} \;`"
 
 #create a bin file for flashing
 $(RELEASE_DIR)$(PROJECT_NAME).bin: $(BUILD_DIR)$(PROJECT_NAME).$(TARGET_EXTENSION)

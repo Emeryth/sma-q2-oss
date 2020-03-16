@@ -5,7 +5,7 @@ TEST_RUNNERS = $(TEST_DIR)test_runners/
 RUBY = ruby
 
 include conf/valgrind.mk
-include conf/cppcheck.mk
+
 
 #unity testing files
 TESTS = $(wildcard $(TEST_DIR)*.c)
