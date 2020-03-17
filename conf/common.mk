@@ -25,7 +25,7 @@ UNITY_ROOT=$(LIB_DIR)/unity
 TARGET_EXTENSION=out
 
 # all source files in lib and the explicit nordic libs down 2 directories in depth
-ALL_SRCS := $(shell find $(LIB_DIR) $(NORDIC_INCS) -maxdepth 2 \( -iname "*.c" \))
+ALL_SRCS = $(shell find $(LIB_DIR) $(NORDIC_INCS) -maxdepth 2 \( -iname "*.c" \))
 # all the source files in src
 ALL_SRCS += $(shell find $(SRC_DIR) \( -iname "*.c" ! -iname "*.pb.c" \))
 

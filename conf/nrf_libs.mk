@@ -1,3 +1,6 @@
+
+#only include the nordic libraries if we're not downloading dependencies 
+ifneq ($(filter dependencies,$(MAKECMDGOALS)),dependencies)
 #non auto-included dirs (we could increase the lib depth but the result would be bringing in a bunch of unneeded files)
 NORDIC_INCS = $(NRF5_SDK_DIR)/components/drivers_nrf/config
 NORDIC_INCS += $(NRF5_SDK_DIR)/components/libraries/ecc
@@ -39,3 +42,4 @@ NORDIC_INCS += $(NRF5_SDK_DIR)/components/drivers_nrf/twi_master
 NORDIC_INCS += $(NRF5_SDK_DIR)/components/drivers_nrf/hal
 NORDIC_INCS += $(NRF5_SDK_DIR)/components/ble/ble_advertising
 NORDIC_INCS += $(NRF5_SDK_DIR)/components/softdevice/common/softdevice_handler
+endif

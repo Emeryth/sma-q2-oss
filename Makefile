@@ -13,6 +13,7 @@ PROJECT_NAME = $(notdir $(shell pwd))
 include conf/common.mk
 include conf/compile_setup.mk
 include conf/compile.mk
+include conf/download.mk
 include conf/tests.mk
 include conf/programming.mk
 include conf/jupyter.mk
