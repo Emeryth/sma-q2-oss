@@ -5,7 +5,7 @@ PB_OBJS = $(patsubst $(SRC_DIR)%.proto,$(BUILD_DIR)$(SRC_DIR)%.pb.c.o,$(SRCPB) )
 PROTOC = protoc
 
 # protocol buffer models
-src/protobuff/%.pb.c:: $(SRCPB) Pipfile.lock
+src/protobuff/%.pb.c:: $(SRCPB) 
 	$(PIPENV) run $(PROTOC) --plugin=protoc-gen-nanopb=./lib/nanopb/generator/protoc-gen-nanopb --nanopb_out=. $<
 	$(PIPENV) run $(PROTOC) --python_out=. $<
 	$(FIND) src/protobuff -name "*.pb.c" -exec $(SED) 's|src/protobuff/||' {} \;
