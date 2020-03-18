@@ -16,6 +16,11 @@ DIRECTIVES += -DBLE_STACK_SUPPORT_REQD
 DIRECTIVES += -DSWI_DISABLE0
 DIRECTIVES += -DARM_MATH_CM4
 
+#default to secure pairing... allow insecure pairing to be specified as a compile-time argument
+INSECURE_PAIRING ?= 0
+ifeq ($(INSECURE_PAIRING),1)
+	DIRECTIVES += -DINSECURE_PAIRING=1
+endif
 
 #flags common to all targets
 CFLAGS += -mcpu=cortex-m4

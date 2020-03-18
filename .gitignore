@@ -16,3 +16,7 @@ lib/nRF5_SDK_11.0.0_89a8197
 *.DS_Store
 
 Pipfile.lock
+
+notebooks/smaq2oss_pb2.py
+
+test/test_runners/
