@@ -1,0 +1,9 @@
+[submodule "lib/nanopb"]
+	path = lib/nanopb
+	url = https://github.com/nanopb/nanopb
+[submodule "lib/unity"]
+	path = lib/unity
+	url = https://github.com/ThrowTheSwitch/Unity.git
+[submodule "bin/fw-tool-pi-nrfjprog.sh"]
+	path = bin/fw-tool-pi-nrfjprog.sh
+	url = https://github.com/nello-io/fw-tool-pi-nrfjprog.sh.git
