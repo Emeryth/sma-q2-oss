@@ -7,5 +7,8 @@ flash: all $(RELEASE_DIR)$(PROJECT_NAME).hex
 	$(NRFJPROG) --clockspeed 10000 --family nRF52 --flash  $(RELEASE_DIR)$(PROJECT_NAME).hex
 	$(NRFJPROG) --clockspeed 10000 --family nRF52 --reset
 
+softdevice:
+	$(NRFJPROG) --clockspeed 10000 --family nRF52 --flash-softdevice $(NRF5_SDK_DIR)/components/softdevice/s132/hex/s132_nrf52_2.0.0_softdevice.hex
+	nrfjprog --reset -f nrf52
 dfu: $(RELEASE_DIR)$(PROJECT_NAME).hex
 	$(PIPENV) run $(ADAFRUIT_NRF_UTIL) dfu genpkg --application $(RELEASE_DIR)$(PROJECT_NAME).hex --application-version 0xffffffff --dev-revision 0xffff --dev-type 0xffff --sd-req 136 $(RELEASE_DIR)app_dfu_package.zip
