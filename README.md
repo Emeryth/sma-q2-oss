@@ -28,6 +28,8 @@ To maintain compatibility with the softdevice and bootloader already on the watc
 
 [Gadgetbridge fork](https://github.com/Emeryth/Gadgetbridge)
 
+In order to erase pairing info on the watch (e.g. to re-pair it again) hold DOWN and OK (middle) and then BACK. The screen will show a short self-test (for colors) and the watch will be reset and ready for a new pairing request.
+
 ## Building
 
 1. Download nRF5 SDK 11.0 and copy the sdk `components` folder to the project folder
