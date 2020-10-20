@@ -31,7 +31,7 @@ To maintain compatibility with the softdevice and bootloader already on the watc
 ## Building
 
 1. [Download nRF5 SDK 11.0](https://www.nordicsemi.com/Software-and-tools/Software/nRF5-SDK/Download#infotabs) and copy the sdk `components` folder to the projects root folder
-2. [Download toolchain](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads) version **4.92015-q3** and extract it.
+2. [Download toolchain](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads) version **gcc-arm-none-eabi-7-2018-q2-update** and extract it.
 2. Edit `components/toolchain/gcc/Makefile.posix` or `Makefile.windows` to point to your toolchain
 2. Install `nrfutil` version **0.5.2**. It requires Python 2 so do it via `pip2 install nrfutil==0.5.2`
 3. Patch the TWI driver to allow transfers longer than 255 bytes:
