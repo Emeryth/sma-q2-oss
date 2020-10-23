@@ -82,3 +82,6 @@ nanopb Copyright (c) Petteri Aimonen
 micro-ecc lib Copyright (c) Kenneth MacKay
 
 See headers for licenses.
+
+## Contact
+Feel free to contact us on Freenode IRC channel [#smaq2oss](irc://chat.freenode.net/smaq2oss).
