@@ -630,9 +630,9 @@ void ble_stack_thread(void * arg)
     UNUSED_PARAMETER(arg);
 
     bool erase_bonds=false;
-    if (!nrf_gpio_pin_read(BUTTON_OK_PIN)){
-    	erase_bonds=true;
-    }
+//    if (!nrf_gpio_pin_read(BUTTON_OK_PIN)){
+//    	erase_bonds=true;
+//    }
 
     m_ble_event_ready = xSemaphoreCreateBinary();
     // Initialize.

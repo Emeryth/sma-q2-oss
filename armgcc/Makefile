@@ -59,6 +59,7 @@ $(abspath $(COMPONENTS)/libraries/uart/app_uart_fifo.c) \
 $(abspath $(COMPONENTS)/libraries/pwm/app_pwm.c) \
 $(abspath $(COMPONENTS)/drivers_nrf/saadc/nrf_drv_saadc.c) \
 $(abspath $(COMPONENTS)/drivers_nrf/hal/nrf_saadc.c) \
+$(abspath $(COMPONENTS)/drivers_nrf/hal/nrf_nvmc.c) \
 $(abspath $(COMPONENTS)/drivers_nrf/delay/nrf_delay.c) \
 $(abspath $(COMPONENTS)/drivers_nrf/common/nrf_drv_common.c) \
 $(abspath $(COMPONENTS)/drivers_nrf/gpiote/nrf_drv_gpiote.c) \

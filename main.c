@@ -17,6 +17,7 @@
 #include "app_util_platform.h"
 #include "nrf_drv_wdt.h"
 #include "nrf_drv_gpiote.h"
+#include "nrf_nvmc.h"
 #include "hardware/buttons.h"
 #include "nrf_gfx.h"
 #include "lcd.h"
@@ -384,6 +385,9 @@ int main(void)
     nrf_gfx_print(p_lcd, &text_start, PINK, "Pink", p_font, true);
     nrf_gfx_display(p_lcd);
 
+    if (!nrf_gpio_pin_read(BUTTON_OK_PIN)){
+    	nrf_nvmc_page_erase(0x75000);
+    }
 //    uart_init();
     battery_init();
     backlight_init();
