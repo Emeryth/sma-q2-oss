@@ -37,7 +37,7 @@
 #define CENTRAL_LINK_COUNT              0                                           /**< Number of central links used by the application. When changing this number remember to adjust the RAM settings*/
 #define PERIPHERAL_LINK_COUNT           1                                           /**< Number of peripheral links used by the application. When changing this number remember to adjust the RAM settings*/
 
-#define DEVICE_NAME                     "SMAQ2"                                     /**< Name of device. Will be included in the advertising data. */
+#define DEVICE_NAME                     "SMAQ2"                                     /**< Name of device. Will be included in the advertising data. Device ID will be appended.*/
 #define DEVICE_NAME_MAX_SIZE            15                                          /**< Maximum length for device name - limited by softdevice. */
 #define NUS_SERVICE_UUID_TYPE           BLE_UUID_TYPE_VENDOR_BEGIN                  /**< UUID type for the Nordic UART Service (vendor specific). */
 
