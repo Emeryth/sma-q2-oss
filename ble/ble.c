@@ -38,7 +38,6 @@
 #define PERIPHERAL_LINK_COUNT           1                                           /**< Number of peripheral links used by the application. When changing this number remember to adjust the RAM settings*/
 
 #define DEVICE_NAME                     "SMAQ2"                                     /**< Name of device. Will be included in the advertising data. Device ID will be appended.*/
-#define DEVICE_NAME_MAX_SIZE            15                                          /**< Maximum length for device name - limited by softdevice. */
 #define NUS_SERVICE_UUID_TYPE           BLE_UUID_TYPE_VENDOR_BEGIN                  /**< UUID type for the Nordic UART Service (vendor specific). */
 
 #define APP_ADV_INTERVAL                640                                          /**< The advertising interval (in units of 0.625 ms. This value corresponds to 40 ms). */
@@ -111,14 +110,22 @@ void gap_params_init(void)
 
     // using more unique name
     // see https://devzone.nordicsemi.com/f/nordic-q-a/16389/unique-ble-device-name
-    char final_device_name[DEVICE_NAME_MAX_SIZE];
-    uint8_t name_size = strlen(DEVICE_NAME);
+    // length of prefix
+    uint16_t device_name_prefix_length = strlen(DEVICE_NAME);
 
-    memcpy(final_device_name, DEVICE_NAME, name_size);
+    // final device name - 9 bytes added for the suffix
+    uint16_t final_device_name_length = device_name_prefix_length+9;
 
-    // append the device ID as a string and set the advertising name
-    sprintf(&final_device_name[name_size], "-%02lX%02lX", (unsigned long)NRF_FICR->DEVICEID[0], (unsigned long)NRF_FICR->DEVICEID[1]);
-    err_code = sd_ble_gap_device_name_set(&sec_mode, (const uint8_t *) final_device_name, name_size+5);
+    // buffer for the final device name
+    char final_device_name[final_device_name_length];
+
+    memcpy(final_device_name, DEVICE_NAME, device_name_prefix_length);
+
+    // append the device ID as unique device name suffix
+    sprintf(&final_device_name[device_name_prefix_length], "-%04lX%04lX", (unsigned long)NRF_FICR->DEVICEID[0], (unsigned long)NRF_FICR->DEVICEID[1]);
+
+    // set the unique advertising name
+    err_code = sd_ble_gap_device_name_set(&sec_mode, (const uint8_t *) final_device_name, final_device_name_length);
     APP_ERROR_CHECK(err_code);
 
     memset(&gap_conn_params, 0, sizeof(gap_conn_params));
